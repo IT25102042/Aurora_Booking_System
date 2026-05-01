@@ -24,7 +24,7 @@ public class ReviewEntity {
 
     @OneToOne
     @JoinColumn(name = "appointments_id", nullable = false, unique = true)
-    //private AppointmentEntity appointment;
+    private AppointmentEntity appointment;
 
     @Column(name = "rating", nullable = false)
     private Integer rating;

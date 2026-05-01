@@ -10,10 +10,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "payment_methods")
 public class PaymentMethodEntity {
+
+    @ManyToOne
+    @JoinColumn(name = "payment_method_id", nullable = false)
+    private PaymentMethodEntity paymentMethod;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @Column(name = "payment_method", nullable = false, length = 45)
-    private String paymentMethod;
 }

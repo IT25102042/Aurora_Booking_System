@@ -7,6 +7,8 @@ import java.util.List;
 public interface CategoryService {
 
     void registerCategory(CategoryDto categoryDto);
+    void updateCategory(CategoryDto categoryDto);
+    void deleteCategory(Integer id);
 
     List<CategoryDto> getAllCategories();
 }

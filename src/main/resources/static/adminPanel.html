@@ -1692,6 +1692,36 @@
         </div>
     </div>
 
+    <!-- Edit Category Modal -->
+    <div class="modal fade" id="categoryEditModal" tabindex="-1" aria-labelledby="categoryEditLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="categoryEditLabel"><i class="fas fa-edit me-2"></i>Edit Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="editCategoryForm">
+                        <input type="hidden" id="editCategoryId" value="1">
+                        <div class="alert alert-info mb-3" style="background:var(--bg-body);border:1px solid var(--border-color);color:var(--dark-text);">
+                            <i class="fas fa-info-circle me-1"></i> Editing Category Name for <b><span id="catNameE"></span></b> (Category ID: <b><span id="catId"></span></b>)
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-group"><label class="form-label">Enter New Category Name</label><input type="text" class="form-control" id="editCategoryName1"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
+                    <button type="button" class="btn-primary" onclick="editCategory();"><i class="fas fa-check me-1"></i>Update Category</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Edit Appointment Modal -->
     <div class="modal fade" id="appointmentEditModal" tabindex="-1" aria-labelledby="appointmentEditLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">

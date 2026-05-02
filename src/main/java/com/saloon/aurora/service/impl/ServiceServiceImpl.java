@@ -19,33 +19,6 @@ public class ServiceServiceImpl implements ServiceService {
     final ModelMapper modelMapper;
 
     @Override
-    public void registerService(ServiceDto serviceDto) {
-
-        ServiceEntity serviceEntity = modelMapper.map(serviceDto, ServiceEntity.class);
-        
-        if (serviceDto.getCategoryId() != null) {
-            com.saloon.aurora.entity.CategoryEntity category = new com.saloon.aurora.entity.CategoryEntity();
-            category.setId(serviceDto.getCategoryId());
-            serviceEntity.setCategory(category);
-        }
-        
-        if (serviceDto.getGenderId() != null) {
-            com.saloon.aurora.entity.GenderEntity gender = new com.saloon.aurora.entity.GenderEntity();
-            gender.setId(serviceDto.getGenderId());
-            serviceEntity.setGender(gender);
-        }
-        
-        if (serviceDto.getServiceStatusId() != null) {
-            com.saloon.aurora.entity.ServiceStatusEntity status = new com.saloon.aurora.entity.ServiceStatusEntity();
-            status.setId(serviceDto.getServiceStatusId());
-            serviceEntity.setServiceStatus(status);
-        }
-
-        serviceRepository.save(serviceEntity);
-
-    }
-
-    @Override
     public List<ServiceDto> getAllServices() {
         List<ServiceEntity> serviceEntities = serviceRepository.findAll();
         List<ServiceDto> serviceDtos = new ArrayList<>();

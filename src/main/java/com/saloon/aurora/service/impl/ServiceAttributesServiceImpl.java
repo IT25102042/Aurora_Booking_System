@@ -3,7 +3,7 @@ package com.saloon.aurora.service.impl;
 import com.saloon.aurora.dto.CategoryDto;
 import com.saloon.aurora.entity.CategoryEntity;
 import com.saloon.aurora.repository.CategoryRepository;
-import com.saloon.aurora.service.CategoryService;
+import com.saloon.aurora.service.ServiceAttributesService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CategoryServiceImpl implements CategoryService {
+public class ServiceAttributesServiceImpl implements ServiceAttributesService {
 
     final CategoryRepository categoryRepository;
     final ModelMapper modelMapper;

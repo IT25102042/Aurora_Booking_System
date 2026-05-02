@@ -37,4 +37,27 @@ public class CategoryController {
         }
     }
 
+    @PutMapping("/update-category")
+    public ResponseEntity<String> updateCategory(@Valid @RequestBody CategoryDto categoryDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(bindingResult.getFieldError().getDefaultMessage());
+        }
+        try {
+            categoryService.updateCategory(categoryDto);
+            return ResponseEntity.ok("Category updated successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/delete-category/{id}")
+    public ResponseEntity<String> deleteCategory(@PathVariable Integer id) {
+        try {
+            categoryService.deleteCategory(id);
+            return ResponseEntity.ok("Category deleted successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 }

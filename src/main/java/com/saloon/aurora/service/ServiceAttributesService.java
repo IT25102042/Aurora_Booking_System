@@ -4,7 +4,7 @@ import com.saloon.aurora.dto.CategoryDto;
 
 import java.util.List;
 
-public interface CategoryService {
+public interface ServiceAttributesService {
 
     void registerCategory(CategoryDto categoryDto);
     void updateCategory(CategoryDto categoryDto);

@@ -1,7 +1,7 @@
 package com.saloon.aurora.controller;
 
 import com.saloon.aurora.dto.CategoryDto;
-import com.saloon.aurora.service.CategoryService;
+import com.saloon.aurora.service.ServiceAttributesService;
 import lombok.RequiredArgsConstructor;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -12,13 +12,13 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api/category")
+@RequestMapping("/api/service-attributes")
 @RequiredArgsConstructor
-public class CategoryController {
+public class ServiceAttributesController {
 
-    private final CategoryService categoryService;
+    private final ServiceAttributesService categoryService;
 
-    @GetMapping("/all")
+    @GetMapping("/all-categories")
     public ResponseEntity<List<CategoryDto>> getAllCategories() {
         List<CategoryDto> categories = categoryService.getAllCategories();
         return ResponseEntity.ok(categories);

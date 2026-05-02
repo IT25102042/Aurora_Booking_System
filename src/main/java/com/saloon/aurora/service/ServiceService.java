@@ -6,7 +6,6 @@ import java.util.List;
 
 public interface ServiceService {
 
-    void registerService(ServiceDto serviceDto);
     
     List<ServiceDto> getAllServices();
 }

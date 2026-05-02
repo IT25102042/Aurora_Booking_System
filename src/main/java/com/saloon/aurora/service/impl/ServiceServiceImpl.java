@@ -49,6 +49,7 @@ public class ServiceServiceImpl implements ServiceService {
     public List<ServiceDto> getAllServices() {
         List<ServiceEntity> serviceEntities = serviceRepository.findAll();
         List<ServiceDto> serviceDtos = new ArrayList<>();
+
         for (ServiceEntity entity : serviceEntities) {
             ServiceDto dto = modelMapper.map(entity, ServiceDto.class);
             if (entity.getCategory() != null) {

@@ -1,3 +1,4 @@
+let allServices = [];
 loadServices();
 
 function loadServices() {
@@ -9,6 +10,7 @@ function loadServices() {
             return response.json();
         })
         .then(data => {
+            allServices = data;
             const tbody = document.getElementById('serviceTableBody');
             if (!tbody) return;
             
@@ -34,7 +36,7 @@ function loadServices() {
                     <td>${service.durationMinutes} mins</td>
                     <td><span class="status ${statusClass}">${service.serviceStatusName || '-'}</span></td>
                     <td>
-                        <button class="action-btn btn-view" data-bs-toggle="modal" data-bs-target="#serivceQuickViewModal"><i class="fas fa-eye"></i></button>
+                        <button class="action-btn btn-view" data-bs-toggle="modal" data-bs-target="#serivceQuickViewModal" onclick="loadServiceDataToView(${service.id})"><i class="fas fa-eye"></i></button>
                         <button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#serviceEditModal"><i class="fas fa-edit"></i></button>
                         <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
                     </td>
@@ -159,3 +161,84 @@ function saveService() {
         alert("Error: " + error.message);
     });
 }
+
+function loadServiceDataToView(id) {
+    const service = allServices.find(s => s.id === id);
+    if (!service) return;
+
+    document.getElementById('viewServiceTitle').textContent = service.title;
+    document.getElementById('viewServiceDescription').textContent = service.description;
+    document.getElementById('viewServicePrice').textContent = `Rs. ${parseFloat(service.price).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    document.getElementById('viewServiceDuration').textContent = service.durationMinutes;
+    document.getElementById('viewServiceCategory').textContent = service.categoryName || '-';
+    document.getElementById('viewServiceCategoryHeader').textContent = service.categoryName || '-';
+    document.getElementById('viewServiceGender').textContent = service.genderName || '-';
+    document.getElementById('viewServiceGenderHeader').textContent = service.genderName || '-';
+    document.getElementById('viewServiceStatus').textContent = service.serviceStatusName || '-';
+    document.getElementById('viewServiceBadge').textContent = service.serviceStatusName || '-';
+    document.getElementById('viewServiceCreated').textContent = service.createdAt ? new Date(service.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '-';
+
+    // Status badge class
+    const badge = document.getElementById('viewServiceBadge');
+    badge.className = 'detail-badge'; // Reset
+    if (service.serviceStatusName && service.serviceStatusName.toLowerCase() === 'available') {
+        badge.classList.add('available');
+    } else if (service.serviceStatusName && service.serviceStatusName.toLowerCase() === 'unavailable') {
+        badge.classList.add('unavailable');
+    }
+
+    // Load Images
+    const mainImgContainer = document.getElementById('viewServiceImageMain');
+    const thumbnailsContainer = document.getElementById('viewServiceThumbnails');
+    
+    // Clear existing
+    mainImgContainer.innerHTML = '';
+    thumbnailsContainer.innerHTML = '';
+
+    const img1Url = `service_images/${service.id}/image1.png`;
+    const img2Url = `service_images/${service.id}/image2.png`;
+    const img3Url = `service_images/${service.id}/image3.png`;
+
+    // Main Image
+    const mainImg = document.createElement('img');
+    mainImg.src = img1Url;
+    mainImg.alt = service.title;
+    mainImg.id = 'mainViewImage';
+    mainImg.style.width = '100%';
+    mainImg.style.height = '100%';
+    mainImg.style.objectFit = 'cover';
+    mainImg.style.borderRadius = '12px';
+    mainImg.onerror = function() {
+        mainImgContainer.innerHTML = '<i class="fas fa-spa" style="font-size:3rem;color:var(--primary-color);"></i>';
+    };
+    mainImgContainer.appendChild(mainImg);
+
+    // Thumbnails
+    const images = [img1Url, img2Url, img3Url];
+    images.forEach((url, index) => {
+        const thumbDiv = document.createElement('div');
+        thumbDiv.className = 'detail-thumb' + (index === 0 ? ' active' : '');
+        
+        const img = document.createElement('img');
+        img.src = url;
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'cover';
+        img.style.borderRadius = '8px';
+        img.onerror = function() {
+            thumbDiv.style.display = 'none'; // Hide if image doesn't exist
+        };
+        img.onclick = function() {
+            // Change main image
+            const mainImageElement = document.getElementById('mainViewImage');
+            if(mainImageElement) mainImageElement.src = url;
+            // Update active thumbnail
+            document.querySelectorAll('.detail-thumb').forEach(t => t.classList.remove('active'));
+            thumbDiv.classList.add('active');
+        };
+        
+        thumbDiv.appendChild(img);
+        thumbnailsContainer.appendChild(thumbDiv);
+    });
+}
+

@@ -1,7 +1,7 @@
 loadCategories();
 
 function loadCategories() {
-    fetch('http://localhost:8080/api/category/all')
+    fetch('http://localhost:8080/api/service-attributes/all-categories')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -46,7 +46,7 @@ function addCategory() {
         category: categoryName
     };
 
-    fetch('http://localhost:8080/api/category/register-category', {
+    fetch('http://localhost:8080/api/service-attributes/register-category', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -89,7 +89,7 @@ function editCategory() {
         category: categoryName
     };
 
-    fetch('http://localhost:8080/api/category/update-category', {
+    fetch('http://localhost:8080/api/service-attributes/update-category', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -118,7 +118,7 @@ function editCategory() {
 
 function deleteCategory(id) {
     if (confirm("Are you sure you want to delete this category?")) {
-        fetch(`http://localhost:8080/api/category/delete-category/${id}`, {
+        fetch(`http://localhost:8080/api/service-attributes/delete-category/${id}`, {
             method: 'DELETE'
         })
         .then(response => {

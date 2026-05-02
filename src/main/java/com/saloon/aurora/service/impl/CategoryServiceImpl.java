@@ -38,4 +38,26 @@ public class CategoryServiceImpl implements CategoryService {
         CategoryEntity categoryEntity = modelMapper.map(categoryDto, CategoryEntity.class);
         categoryRepository.save(categoryEntity);
     }
+
+    @Override
+    public void updateCategory(CategoryDto categoryDto) {
+        CategoryEntity existingCategory = categoryRepository.findById(categoryDto.getId())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        CategoryEntity categoryWithName = categoryRepository.findByCategory(categoryDto.getCategory());
+        if (categoryWithName != null && !categoryWithName.getId().equals(categoryDto.getId())) {
+            throw new RuntimeException("Category name already exists");
+        }
+
+        existingCategory.setCategory(categoryDto.getCategory());
+        categoryRepository.save(existingCategory);
+    }
+
+    @Override
+    public void deleteCategory(Integer id) {
+        if (!categoryRepository.existsById(id)) {
+            throw new RuntimeException("Category not found");
+        }
+        categoryRepository.deleteById(id);
+    }
 }

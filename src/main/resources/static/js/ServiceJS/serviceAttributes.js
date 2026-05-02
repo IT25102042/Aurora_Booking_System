@@ -1,4 +1,49 @@
 loadCategories();
+loadAddServiceDropdowns();
+
+function loadAddServiceDropdowns() {
+    // Categories
+    fetch('http://localhost:8080/api/service-attributes/all-categories')
+        .then(response => response.json())
+        .then(data => {
+            const categorySelect = document.getElementById('addServiceCategory');
+            if(categorySelect) {
+                categorySelect.innerHTML = '<option value="">-- Select --</option>';
+                data.forEach(category => {
+                    categorySelect.innerHTML += `<option value="${category.id}">${category.category}</option>`;
+                });
+            }
+        })
+        .catch(error => console.error('Error fetching categories:', error));
+
+    // Genders
+    fetch('http://localhost:8080/api/service-attributes/all-genders')
+        .then(response => response.json())
+        .then(data => {
+            const genderSelect = document.getElementById('addServiceGender');
+            if(genderSelect) {
+                genderSelect.innerHTML = '<option value="">-- Select --</option>';
+                data.forEach(gender => {
+                    genderSelect.innerHTML += `<option value="${gender.id}">${gender.gender}</option>`;
+                });
+            }
+        })
+        .catch(error => console.error('Error fetching genders:', error));
+
+    // Statuses
+    fetch('http://localhost:8080/api/service-attributes/all-service-statuses')
+        .then(response => response.json())
+        .then(data => {
+            const statusSelect = document.getElementById('addServiceStatus');
+            if(statusSelect) {
+                statusSelect.innerHTML = '<option value="">-- Select --</option>';
+                data.forEach(status => {
+                    statusSelect.innerHTML += `<option value="${status.id}">${status.serviceStatus}</option>`;
+                });
+            }
+        })
+        .catch(error => console.error('Error fetching statuses:', error));
+}
 
 function loadCategories() {
     fetch('http://localhost:8080/api/service-attributes/all-categories')

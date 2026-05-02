@@ -1,8 +1,14 @@
 package com.saloon.aurora.service.impl;
 
 import com.saloon.aurora.dto.CategoryDto;
+import com.saloon.aurora.dto.GenderDto;
+import com.saloon.aurora.dto.ServiceStatusDto;
 import com.saloon.aurora.entity.CategoryEntity;
+import com.saloon.aurora.entity.GenderEntity;
+import com.saloon.aurora.entity.ServiceStatusEntity;
 import com.saloon.aurora.repository.CategoryRepository;
+import com.saloon.aurora.repository.GenderRepository;
+import com.saloon.aurora.repository.ServiceStatusRepository;
 import com.saloon.aurora.service.ServiceAttributesService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -16,6 +22,8 @@ import java.util.List;
 public class ServiceAttributesServiceImpl implements ServiceAttributesService {
 
     final CategoryRepository categoryRepository;
+    final GenderRepository genderRepository;
+    final ServiceStatusRepository serviceStatusRepository;
     final ModelMapper modelMapper;
 
     @Override
@@ -27,6 +35,28 @@ public class ServiceAttributesServiceImpl implements ServiceAttributesService {
         });
 
         return categoryDtoList;
+    }
+
+    @Override
+    public List<GenderDto> getAllGenders() {
+        List<GenderDto> genderDtoList = new ArrayList<>();
+
+        genderRepository.findAll().forEach(GenderEntity ->{
+            genderDtoList.add(modelMapper.map(GenderEntity, GenderDto.class));
+        });
+
+        return genderDtoList;
+    }
+
+    @Override
+    public List<ServiceStatusDto> getAllServiceStatuses() {
+        List<ServiceStatusDto> serviceStatusDtoList = new ArrayList<>();
+
+        serviceStatusRepository.findAll().forEach(ServiceStatusEntity ->{
+            serviceStatusDtoList.add(modelMapper.map(ServiceStatusEntity, ServiceStatusDto.class));
+        });
+
+        return serviceStatusDtoList;
     }
 
     @Override

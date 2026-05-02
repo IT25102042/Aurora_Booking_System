@@ -1,6 +1,8 @@
 package com.saloon.aurora.controller;
 
 import com.saloon.aurora.dto.CategoryDto;
+import com.saloon.aurora.dto.GenderDto;
+import com.saloon.aurora.dto.ServiceStatusDto;
 import com.saloon.aurora.service.ServiceAttributesService;
 import lombok.RequiredArgsConstructor;
 import jakarta.validation.Valid;
@@ -16,12 +18,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ServiceAttributesController {
 
-    private final ServiceAttributesService categoryService;
+    private final ServiceAttributesService serviceAttributesService;
 
     @GetMapping("/all-categories")
     public ResponseEntity<List<CategoryDto>> getAllCategories() {
-        List<CategoryDto> categories = categoryService.getAllCategories();
+        List<CategoryDto> categories = serviceAttributesService.getAllCategories();
         return ResponseEntity.ok(categories);
+    }
+
+    @GetMapping("/all-genders")
+    public ResponseEntity<List<GenderDto>> getAllGenders() {
+        List<GenderDto> genders = serviceAttributesService.getAllGenders();
+        return ResponseEntity.ok(genders);
+    }
+
+    @GetMapping("/all-service-statuses")
+    public ResponseEntity<List<ServiceStatusDto>> getAllServiceStatuses() {
+        List<ServiceStatusDto> statuses = serviceAttributesService.getAllServiceStatuses();
+        return ResponseEntity.ok(statuses);
     }
 
     @PostMapping("/register-category")
@@ -30,7 +44,7 @@ public class ServiceAttributesController {
             return ResponseEntity.badRequest().body(bindingResult.getFieldError().getDefaultMessage());
         }
         try {
-            categoryService.registerCategory(categoryDto);
+            serviceAttributesService.registerCategory(categoryDto);
             return ResponseEntity.ok("Category saved successfully");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -43,7 +57,7 @@ public class ServiceAttributesController {
             return ResponseEntity.badRequest().body(bindingResult.getFieldError().getDefaultMessage());
         }
         try {
-            categoryService.updateCategory(categoryDto);
+            serviceAttributesService.updateCategory(categoryDto);
             return ResponseEntity.ok("Category updated successfully");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -53,7 +67,7 @@ public class ServiceAttributesController {
     @DeleteMapping("/delete-category/{id}")
     public ResponseEntity<String> deleteCategory(@PathVariable Integer id) {
         try {
-            categoryService.deleteCategory(id);
+            serviceAttributesService.deleteCategory(id);
             return ResponseEntity.ok("Category deleted successfully");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

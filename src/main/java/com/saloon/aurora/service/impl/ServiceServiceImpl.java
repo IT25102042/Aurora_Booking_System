@@ -93,7 +93,7 @@ public class ServiceServiceImpl implements ServiceService {
         serviceEntity = serviceRepository.save(serviceEntity);
 
         // Define directory to save images
-        String uploadDir = "src/main/resources/static/product_images/" + serviceEntity.getId();
+        String uploadDir = "src/main/resources/static/service_images/" + serviceEntity.getId();
         File uploadPath = new File(uploadDir);
         if (!uploadPath.exists()) {
             uploadPath.mkdirs();

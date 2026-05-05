@@ -85,4 +85,15 @@ public class ServiceController {
             return ResponseEntity.badRequest().body("Failed to update service: " + e.getMessage());
         }
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteService(@PathVariable Integer id) {
+        try {
+            serviceService.deleteService(id);
+            return ResponseEntity.ok("Service deleted successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Failed to delete service: " + e.getMessage());
+        }
+    }
 }

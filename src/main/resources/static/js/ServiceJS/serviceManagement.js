@@ -41,7 +41,7 @@ function loadServices() {
                     <td>
                         <button class="action-btn btn-view" data-bs-toggle="modal" data-bs-target="#serivceQuickViewModal" onclick="loadServiceDataToView(${service.id})"><i class="fas fa-eye"></i></button>
                         <button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#serviceEditModal" onclick="loadServiceDataToEdit(${service.id})"><i class="fas fa-edit"></i></button>
-                        <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
+                        <button class="action-btn btn-delete" onclick="deleteService(${service.id})"><i class="fas fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -596,6 +596,27 @@ function deleteCategory(id) {
         .catch(error => {
             console.error('Error deleting category:', error);
             alert(error.message || "Failed to delete category. It might be in use.");
+        });
+    }
+}
+
+function deleteService(id) {
+    if (confirm("Are you sure you want to delete this service? This action cannot be undone and will also delete all associated images.")) {
+        fetch(`http://localhost:8080/api/service/delete/${id}`, {
+            method: 'DELETE'
+        })
+        .then(async response => {
+            const message = await response.text();
+            if (response.ok) {
+                alert("Success: " + message);
+                loadServices(); // Refresh the table
+            } else {
+                throw new Error(message || "Failed to delete service");
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting service:', error);
+            alert("Error: " + error.message);
         });
     }
 }

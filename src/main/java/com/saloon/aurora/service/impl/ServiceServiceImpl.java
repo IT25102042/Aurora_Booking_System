@@ -174,5 +174,33 @@ public class ServiceServiceImpl implements ServiceService {
             Path filePath = Paths.get(uploadDir, "image3.png");
             Files.copy(image3.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         }
+
+    }
+
+    @Override
+    public void deleteService(Integer id) {
+        ServiceEntity serviceEntity = serviceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Service not found"));
+
+        // 1. Delete Service from DB
+        serviceRepository.delete(serviceEntity);
+
+        // 2. Delete associated images directory
+        String uploadDir = "src/main/resources/static/service_images/" + id;
+        File uploadPath = new File(uploadDir);
+        if (uploadPath.exists()) {
+            deleteDirectory(uploadPath);
+        }
+    }
+
+    // Helper method to delete directory recursively
+    private boolean deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        return directoryToBeDeleted.delete();
     }
 }

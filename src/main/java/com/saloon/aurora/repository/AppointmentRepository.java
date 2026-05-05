@@ -2,19 +2,28 @@ package com.saloon.aurora.repository;
 
 import com.saloon.aurora.entity.AppointmentEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.List;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalTime;
 import java.util.Date;
+import java.util.List;
 
+@Repository
 public interface AppointmentRepository extends JpaRepository<AppointmentEntity, Integer> {
-    List<AppointmentEntity> findByUser_Id(Integer userID);
 
-    List<AppointmentEntity> findByStylistProfile_Id(Integer stylistProfileId);
+    List<AppointmentEntity> findByStylistProfileIdAndAppointmentDate(
+            Integer stylistProfileId,
+            Date appointmentDate
+    );
 
-    List<AppointmentEntity> findByAppointmentStatus_Id(Integer statusId);
+    List<AppointmentEntity> findByUserId(Integer userId);
 
-    List<AppointmentEntity> findByAppointmentDate(Date date);
+    List<AppointmentEntity> findByAppointmentStatusId(Integer appointmentStatusId);
 
-    List<AppointmentEntity> findByAppointmentDateAndStylistProfile_Id(Date date, Integer stylistId);
-
-    List<AppointmentEntity> findByUser_IdAndAppointmentStatus_Id(Integer userId, Integer statusId);
+    List<AppointmentEntity> findByStylistProfileIdAndAppointmentDateAndStartTimeLessThanAndEndTimeGreaterThan(
+            Integer stylistProfileId,
+            Date appointmentDate,
+            LocalTime endTime,
+            LocalTime startTime
+    );
 }

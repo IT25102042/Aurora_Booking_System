@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salon Booking - Login</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome Back</h1>
+            <p>Login to your account</p>
+        </div>
+        
+        <div id="message" class="message"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" class="form-control" required placeholder="john@example.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" class="form-control" required placeholder="Enter password">
+            </div>
+            
+            <button type="submit" class="btn" id="loginBtn">Login</button>
+        </form>
+        
+        <div class="footer-link">
+            Don't have an account? <a href="register.html">Register here</a>
+        </div>
+    </div>
+
+    <script>
+        // If already logged in, redirect to dashboard
+        if (localStorage.getItem('user')) {
+            window.location.href = 'dashboard.html';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('loginBtn');
+            const messageEl = document.getElementById('message');
+            
+            btn.disabled = true;
+            btn.innerText = 'Logging in...';
+            
+            const credentials = {
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value
+            };
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/users/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(credentials)
+                });
+                
+                if (response.ok) {
+                    const user = await response.json();
+                    localStorage.setItem('user', JSON.stringify(user));
+                    
+                    messageEl.className = 'message success';
+                    messageEl.innerText = 'Login successful!';
+                    
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                } else {
+                    messageEl.className = 'message error';
+                    messageEl.innerText = 'Invalid email or password.';
+                    btn.disabled = false;
+                    btn.innerText = 'Login';
+                }
+            } catch (error) {
+                messageEl.className = 'message error';
+                messageEl.innerText = 'Cannot connect to server. Ensure backend is running.';
+                btn.disabled = false;
+                btn.innerText = 'Login';
+            }
+        });
+    </script>
+</body>
+</html>

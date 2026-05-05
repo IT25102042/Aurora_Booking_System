@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account · AURORA dimension salon</title>
+  <!-- Bootstrap 5 + icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- GSAP + Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== AURORA BASE THEMES (copied from homepage) ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ===== FEMALE LIGHT THEME ===== */
+    body.female-theme {
+      --bg-primary: #f3e8e7;
+      --bg-secondary: #eed5d2;
+      --accent-1: #ecafb8;
+      --accent-2: #b92c62;
+      --pure-white: #ffffff;
+      --text-primary: #2d1f2c;
+      --text-secondary: #5c4b5a;
+      --glow-primary: rgba(236, 175, 184, 0.6);
+      --glow-secondary: rgba(185, 44, 98, 0.5);
+      --neon-glow: 0 0 30px rgba(185, 44, 98, 0.3);
+      --glass-bg: rgba(255, 255, 255, 0.25);
+      --card-shadow: 0 30px 60px -15px rgba(185, 44, 98, 0.3);
+      --gradient-1: linear-gradient(135deg, #f3e8e7, #ecafb8);
+      --gradient-2: linear-gradient(45deg, #ecafb8, #b92c62);
+    }
+
+    /* ===== MALE DARK THEME ===== */
+    body.male-theme {
+      --bg-primary: #030514;
+      --bg-secondary: #0a1120;
+      --accent-1: #00d0ff;
+      --accent-2: #7a2eff;
+      --pure-white: #0f172a;
+      --text-primary: #ffffff;
+      --text-secondary: #a0b8d4;
+      --glow-primary: rgba(0, 208, 255, 0.6);
+      --glow-secondary: rgba(122, 46, 255, 0.5);
+      --neon-glow: 0 0 40px #00d0ff, 0 0 80px #7a2eff;
+      --glass-bg: rgba(10, 17, 32, 0.4);
+      --card-shadow: 0 30px 60px -15px rgba(0, 208, 255, 0.4);
+      --gradient-1: linear-gradient(135deg, #030514, #0a1120);
+      --gradient-2: linear-gradient(45deg, #00d0ff, #7a2eff);
+    }
+
+    /* Canvas 3D Background */
+    #canvas-3d {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Custom Cursor */
+    .custom-cursor {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--accent-2);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.4, 1);
+      mix-blend-mode: difference;
+      transform: translate(-50%, -50%);
+    }
+
+    .cursor-dot {
+      width: 4px;
+      height: 4px;
+      background: var(--accent-2);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.1s ease;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Main Content Wrapper */
+    .content-wrapper {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Navbar - Fixed with proper spacing */
+    .navbar {
+      background: var(--glass-bg) !important;
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 1.2rem 0;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+    }
+
+    .navbar.scrolled {
+      padding: 0.8rem 0;
+      background: var(--glass-bg) !important;
+      backdrop-filter: blur(30px);
+    }
+
+    .navbar-brand {
+      font-family: 'Syncopate', sans-serif;
+      font-weight: 700;
+      font-size: 1.8rem;
+      background: var(--gradient-2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+    }
+
+    .nav-link {
+      color: var(--text-primary) !important;
+      font-weight: 500;
+      margin: 0 1rem;
+      position: relative;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      transition: color 0.3s ease;
+    }
+
+    .nav-link::before {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gradient-2);
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .nav-link:hover::before,
+    .nav-link.active::before {
+      width: 100%;
+    }
+
+    /* Theme Toggle Buttons */
+    .theme-toggle {
+      display: flex;
+      gap: 0.5rem;
+      background: var(--glass-bg);
+      padding: 0.3rem;
+      border-radius: 50px;
+      backdrop-filter: blur(10px);
+    }
+
+    .theme-btn {
+      border: none;
+      padding: 0.6rem 1.5rem;
+      border-radius: 50px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 0.8rem;
+      transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .theme-btn.female {
+      background: #b92c62;
+      color: #f3e8e7;
+    }
+
+    .theme-btn.male {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid #00d0ff;
+    }
+
+    .theme-btn.active {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px var(--accent-2);
+    }
+
+    /* Scroll Progress Bar */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 4px;
+      background: var(--gradient-2);
+      z-index: 9999;
+      transition: width 0.2s cubic-bezier(0.2, 0.9, 0.4, 1);
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      padding: 4rem 0 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+
+    .social-link {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--gradient-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      transition: all 0.6s cubic-bezier(0.2, 0.9, 0.4, 1);
+    }
+
+    .social-link:hover {
+      transform: rotate(360deg) scale(1.1);
+    }
+
+    /* ===== ACCOUNT PAGE SPECIFIC STYLES ===== */
+    .account-header {
+      padding: 120px 0 40px;
+      background: var(--gradient-1);
+      color: var(--text-primary);
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--accent-1);
+    }
+    .account-header .breadcrumb {
+      background: transparent;
+      margin-bottom: 0;
+    }
+    .account-header .breadcrumb-item,
+    .account-header .breadcrumb-item a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+    .account-header .breadcrumb-item.active {
+      color: var(--accent-2);
+    }
+    .breadcrumb-item+.breadcrumb-item::before {
+      color: var(--text-secondary);
+    }
+
+    .account-section {
+      padding: 60px 0;
+    }
+
+    /* account sidebar */
+    .account-sidebar {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      border-radius: 30px;
+      padding: 25px;
+      border: 1px solid rgba(255,255,255,0.15);
+      position: sticky;
+      top: 100px;
+    }
+    .account-sidebar .user-info {
+      text-align: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 20px;
+    }
+    .avatar-lg {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: var(--gradient-2);
+      margin: 0 auto 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: white;
+      font-weight: 600;
+    }
+    .nav-account {
+      list-style: none;
+      padding: 0;
+    }
+    .nav-account li {
+      margin-bottom: 5px;
+    }
+    .nav-account a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 15px;
+      border-radius: 60px;
+      color: var(--text-primary);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .nav-account a i {
+      font-size: 1.2rem;
+    }
+    .nav-account a:hover,
+    .nav-account a.active {
+      background: var(--gradient-2);
+      color: white;
+    }
+
+    /* account content cards */
+    .account-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      border-radius: 30px;
+      padding: 30px;
+      border: 1px solid rgba(255,255,255,0.15);
+      margin-bottom: 30px;
+    }
+    .account-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+
+    .profile-field {
+      margin-bottom: 15px;
+    }
+    .profile-field label {
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+    }
+    .profile-field p {
+      background: var(--glass-bg);
+      padding: 10px 15px;
+      border-radius: 60px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .booking-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .booking-item:last-child {
+      border-bottom: none;
+    }
+    .booking-service {
+      font-weight: 600;
+    }
+    .booking-date {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    .booking-status {
+      padding: 4px 12px;
+      border-radius: 60px;
+      font-size: 0.8rem;
+      background: var(--accent-2);
+      color: white;
+    }
+
+    .favorite-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .favorite-item img {
+      width: 60px;
+      height: 60px;
+      border-radius: 15px;
+      object-fit: cover;
+    }
+    .favorite-info h5 {
+      margin-bottom: 5px;
+    }
+    .favorite-info p {
+      color: var(--accent-2);
+      font-weight: 600;
+    }
+
+    .btn-edit {
+      background: transparent;
+      border: 2px solid var(--accent-2);
+      color: var(--accent-2);
+      padding: 8px 25px;
+      border-radius: 60px;
+      transition: all 0.3s ease;
+    }
+    .btn-edit:hover {
+      background: var(--accent-2);
+      color: white;
+    }
+
+    /* tab content */
+    .tab-pane {
+      display: none;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* Back to top */
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--accent-2);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-shadow: var(--neon-glow);
+      transition: all 0.4s ease;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 1000;
+    }
+
+    .back-to-top.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    @media (max-width: 992px) {
+      .account-sidebar {
+        position: static;
+        margin-bottom: 30px;
+      }
+    }
+  </style>
+</head>
+<body class="female-theme">
+  <!-- 3D Canvas Background -->
+  <canvas id="canvas-3d"></canvas>
+
+  <!-- Custom Cursor -->
+  <div class="custom-cursor"></div>
+  <div class="cursor-dot"></div>
+
+  <!-- Scroll Progress -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- Navbar (same as homepage) -->
+  <nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="#">AURORA</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Services</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Gallery</a></li>
+          <li class="nav-item"><a class="nav-link active" href="#">My Account</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+        </ul>
+        <div class="theme-toggle">
+          <button class="theme-btn female active" id="femaleTheme"><i class="bi bi-venus"></i> Feminine</button>
+          <button class="theme-btn male" id="maleTheme"><i class="bi bi-mars"></i> Masculine</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="content-wrapper">
+    <!-- Page Header -->
+    <section class="account-header">
+      <div class="container">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">My Account</li>
+          </ol>
+        </nav>
+      </div>
+    </section>
+
+    <!-- Account Section -->
+    <section class="account-section">
+      <div class="container">
+        <div class="row g-5">
+          <!-- Sidebar -->
+          <div class="col-lg-4">
+            <div class="account-sidebar">
+              <div class="user-info">
+                <div class="avatar-lg">J</div>
+                <h4>Jessica Parker</h4>
+                <p class="text-secondary">jessica.p@email.com</p>
+              </div>
+              <ul class="nav-account">
+                <li><a href="#" class="active" data-tab="profile"><i class="bi bi-person-circle"></i> Profile</a></li>
+                <li><a href="#" data-tab="bookings"><i class="bi bi-calendar-check"></i> Booking History</a></li>
+                <li><a href="#" data-tab="favorites"><i class="bi bi-heart"></i> Favorites</a></li>
+                <li><a href="#" data-tab="settings"><i class="bi bi-gear"></i> Settings</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Main Content -->
+          <div class="col-lg-8">
+            <!-- Profile Tab -->
+            <div class="tab-pane active" id="profile">
+              <div class="account-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h3>Profile Information</h3>
+                  <button class="btn-edit"><i class="bi bi-pencil"></i> Edit</button>
+                </div>
+                <div class="profile-field">
+                  <label>Full Name</label>
+                  <p>Jessica Parker</p>
+                </div>
+                <div class="profile-field">
+                  <label>Email Address</label>
+                  <p>jessica.p@email.com</p>
+                </div>
+                <div class="profile-field">
+                  <label>Phone Number</label>
+                  <p>+1 (555) 123-4567</p>
+                </div>
+                <div class="profile-field">
+                  <label>Member Since</label>
+                  <p>January 15, 2025</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bookings Tab -->
+            <div class="tab-pane" id="bookings">
+              <div class="account-card">
+                <h3>Booking History</h3>
+                <div class="booking-item">
+                  <div>
+                    <div class="booking-service">Diamond Facial</div>
+                    <div class="booking-date">April 12, 2025 · 10:00 AM</div>
+                  </div>
+                  <span class="booking-status">Completed</span>
+                </div>
+                <div class="booking-item">
+                  <div>
+                    <div class="booking-service">Quantum Hair</div>
+                    <div class="booking-date">March 28, 2025 · 2:30 PM</div>
+                  </div>
+                  <span class="booking-status">Completed</span>
+                </div>
+                <div class="booking-item">
+                  <div>
+                    <div class="booking-service">Neon Nails</div>
+                    <div class="booking-date">March 15, 2025 · 11:00 AM</div>
+                  </div>
+                  <span class="booking-status">Cancelled</span>
+                </div>
+                <div class="booking-item">
+                  <div>
+                    <div class="booking-service">Aromatherapy</div>
+                    <div class="booking-date">May 5, 2025 · 3:00 PM</div>
+                  </div>
+                  <span class="booking-status">Upcoming</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Favorites Tab -->
+            <div class="tab-pane" id="favorites">
+              <div class="account-card">
+                <h3>Favorite Services</h3>
+                <div class="favorite-item">
+                  <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=100" alt="Neon Nails">
+                  <div class="favorite-info">
+                    <h5>Neon Nails 3D</h5>
+                    <p>$65</p>
+                  </div>
+                </div>
+                <div class="favorite-item">
+                  <img src="https://images.unsplash.com/photo-1562322140-8baeececf3df?w=100" alt="Diamond Facial">
+                  <div class="favorite-info">
+                    <h5>Diamond Facial</h5>
+                    <p>$89</p>
+                  </div>
+                </div>
+                <div class="favorite-item">
+                  <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=100" alt="Quantum Hair">
+                  <div class="favorite-info">
+                    <h5>Quantum Hair</h5>
+                    <p>$120</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-pane" id="settings">
+              <div class="account-card">
+                <h3>Account Settings</h3>
+                <div class="mb-4">
+                  <label class="form-label">Change Password</label>
+                  <input type="password" class="form-control mb-2" placeholder="Current password">
+                  <input type="password" class="form-control mb-2" placeholder="New password">
+                  <input type="password" class="form-control" placeholder="Confirm new password">
+                </div>
+                <div class="mb-4">
+                  <label class="form-label">Email Notifications</label>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="notif1" checked>
+                    <label class="form-check-label" for="notif1">Booking confirmations</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="notif2" checked>
+                    <label class="form-check-label" for="notif2">Promotional offers</label>
+                  </div>
+                </div>
+                <button class="btn-edit">Save Changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-4 mb-4">
+            <h3 class="navbar-brand mb-3">AURORA</h3>
+            <p style="color: var(--text-secondary);">Redefining beauty through technology and artistry. Experience the dimension of true elegance.</p>
+          </div>
+          <div class="col-lg-2 mb-4">
+            <h5>Quick Links</h5>
+            <ul class="list-unstyled">
+              <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Home</a></li>
+              <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Services</a></li>
+              <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Gallery</a></li>
+              <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Contact</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-3 mb-4">
+            <h5>Contact</h5>
+            <ul class="list-unstyled">
+              <li style="color: var(--text-secondary);"><i class="bi bi-geo-alt"></i> 123 Beauty Ave</li>
+              <li style="color: var(--text-secondary);"><i class="bi bi-telephone"></i> +1 234 567 890</li>
+              <li style="color: var(--text-secondary);"><i class="bi bi-envelope"></i> info@aurora.com</li>
+            </ul>
+          </div>
+          <div class="col-lg-3 mb-4">
+            <h5>Follow Us</h5>
+            <div class="social-links">
+              <a href="#" class="social-link"><i class="bi bi-instagram"></i></a>
+              <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
+              <a href="#" class="social-link"><i class="bi bi-tiktok"></i></a>
+              <a href="#" class="social-link"><i class="bi bi-pinterest"></i></a>
+            </div>
+          </div>
+        </div>
+        <hr style="border-color: var(--text-secondary); opacity: 0.1;">
+        <div class="text-center" style="color: var(--text-secondary);"><p>&copy; 2025 AURORA SALON. All rights reserved.</p></div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Back to top -->
+  <a href="#" class="back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // ========== THREE.JS BACKGROUND ==========
+    const canvas = document.getElementById('canvas-3d');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    const particlesGeometry = new THREE.BufferGeometry();
+    const particlesCount = 2000;
+    const posArray = new Float32Array(particlesCount * 3);
+    const colorArray = new Float32Array(particlesCount * 3);
+    for (let i = 0; i < particlesCount * 3; i += 3) {
+      posArray[i] = (Math.random() - 0.5) * 30;
+      posArray[i+1] = (Math.random() - 0.5) * 30;
+      posArray[i+2] = (Math.random() - 0.5) * 30;
+      const theme = document.body.classList.contains('female-theme') ? '#b92c62' : '#00d0ff';
+      const color = new THREE.Color(theme);
+      colorArray[i] = color.r;
+      colorArray[i+1] = color.g;
+      colorArray[i+2] = color.b;
+    }
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+    const particlesMaterial = new THREE.PointsMaterial({ size: 0.02, vertexColors: true, transparent: true, blending: THREE.AdditiveBlending });
+    const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particlesMesh);
+    camera.position.z = 15;
+    function animateParticles() {
+      requestAnimationFrame(animateParticles);
+      particlesMesh.rotation.y += 0.0002;
+      particlesMesh.rotation.x += 0.0001;
+      renderer.render(scene, camera);
+    }
+    animateParticles();
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // ========== CUSTOM CURSOR ==========
+    const cursor = document.querySelector('.custom-cursor');
+    const cursorDot = document.querySelector('.cursor-dot');
+    let mouseX = 0, mouseY = 0, cursorX = 0, cursorY = 0;
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX; mouseY = e.clientY;
+      cursorDot.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+    });
+    function animateCursor() {
+      cursorX += (mouseX - cursorX) * 0.2;
+      cursorY += (mouseY - cursorY) * 0.2;
+      cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    // ========== SCROLL PROGRESS ==========
+    window.addEventListener('scroll', () => {
+      const winScroll = document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      document.getElementById('scrollProgress').style.width = scrolled + '%';
+    });
+
+    // ========== NAVBAR SCROLL EFFECT ==========
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('mainNav');
+      if (window.scrollY > 50) nav.classList.add('scrolled');
+      else nav.classList.remove('scrolled');
+    });
+
+    // ========== THEME TOGGLE ==========
+    const femaleBtn = document.getElementById('femaleTheme');
+    const maleBtn = document.getElementById('maleTheme');
+    const body = document.body;
+    function setTheme(theme) {
+      body.classList.remove('female-theme', 'male-theme');
+      body.classList.add(`${theme}-theme`);
+      femaleBtn.classList.remove('active');
+      maleBtn.classList.remove('active');
+      if (theme === 'female') {
+        femaleBtn.classList.add('active');
+        femaleBtn.style.background = '#b92c62'; femaleBtn.style.color = '#f3e8e7';
+        maleBtn.style.background = 'transparent'; maleBtn.style.color = 'var(--text-primary)';
+      } else {
+        maleBtn.classList.add('active');
+        maleBtn.style.background = '#00d0ff'; maleBtn.style.color = '#030514';
+        femaleBtn.style.background = 'transparent'; femaleBtn.style.color = 'var(--text-primary)';
+      }
+      const themeColor = theme === 'female' ? '#b92c62' : '#00d0ff';
+      const color = new THREE.Color(themeColor);
+      const colors = particlesGeometry.attributes.color.array;
+      for (let i = 0; i < colors.length; i += 3) {
+        colors[i] = color.r; colors[i+1] = color.g; colors[i+2] = color.b;
+      }
+      particlesGeometry.attributes.color.needsUpdate = true;
+    }
+    femaleBtn.addEventListener('click', () => setTheme('female'));
+    maleBtn.addEventListener('click', () => setTheme('male'));
+
+    // ========== BACK TO TOP ==========
+    const backBtn = document.querySelector('.back-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) backBtn.classList.add('active');
+      else backBtn.classList.remove('active');
+    });
+    backBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // ========== TAB SWITCHING ==========
+    const tabLinks = document.querySelectorAll('.nav-account a');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+
+    tabLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        // remove active from all links
+        tabLinks.forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+
+        // hide all panes
+        const targetId = this.dataset.tab;
+        tabPanes.forEach(pane => pane.classList.remove('active'));
+        document.getElementById(targetId).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

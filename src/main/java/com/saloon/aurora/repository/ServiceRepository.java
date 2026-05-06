@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ServiceRepository extends JpaRepository<ServiceEntity, Integer> {
     boolean existsByTitleIgnoreCase(String title);
+    java.util.Optional<ServiceEntity> findByTitleIgnoreCase(String title);
 }

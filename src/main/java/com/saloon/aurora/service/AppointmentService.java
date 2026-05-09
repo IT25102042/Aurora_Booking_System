@@ -1,13 +1,11 @@
 package com.saloon.aurora.service;
 
-import com.saloon.aurora.dto.AppointmentRequestDTO;
-import com.saloon.aurora.dto.AppointmentResponseDTO;
+import com.saloon.aurora.dto.AppointmentDTO;
 import com.saloon.aurora.entity.*;
 import com.saloon.aurora.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,139 +13,195 @@ import java.util.stream.Collectors;
 @Service
 public class AppointmentService {
 
-    @Autowired private AppointmentRepository appointmentRepository;
-    @Autowired private UserRepository userRepository;
-    @Autowired private ServiceRepository serviceRepository;
-    @Autowired private StylistProfileRepository stylistProfileRepository;
-    @Autowired private PaymentMethodRepository paymentMethodRepository;
-    @Autowired private AppointmentStatusRepository appointmentStatusRepository;
+    @Autowired
+    private AppointmentRepository appointmentRepository;
 
-    public AppointmentResponseDTO createAppointment(AppointmentRequestDTO dto) {
+    @Autowired
+    private UserRepository userRepository;
 
-        AppointmentEntity appointment = buildAppointmentFromDTO(new AppointmentEntity(), dto);
+    @Autowired
+    private ServiceRepository serviceRepository;
 
-        AppointmentStatusEntity status = appointmentStatusRepository
-                .findByAppointmentStatus("PENDING")
-                .orElseThrow(() -> new RuntimeException("Default status not found"));
-        appointment.setAppointmentStatus(status);
+    @Autowired
+    private StylistProfileRepository stylistProfileRepository;
 
+    @Autowired
+    private PaymentMethodRepository paymentMethodRepository;
+
+    @Autowired
+    private AppointmentStatusRepository appointmentStatusRepository;
+
+    public AppointmentDTO createAppointment(AppointmentDTO dto) {
+
+        UserEntity user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        ServiceEntity service = serviceRepository.findById(dto.getServiceId())
+                .orElseThrow(() -> new RuntimeException("Service not found"));
+
+        StylistProfileEntity stylistProfile = stylistProfileRepository.findById(dto.getStylistProfileId())
+                .orElseThrow(() -> new RuntimeException("Stylist profile not found"));
+
+        PaymentMethodEntity paymentMethod = paymentMethodRepository.findById(dto.getPaymentMethodId())
+                .orElseThrow(() -> new RuntimeException("Payment method not found"));
+
+        AppointmentStatusEntity appointmentStatus = appointmentStatusRepository.findById(dto.getAppointmentStatusId())
+                .orElseThrow(() -> new RuntimeException("Appointment status not found"));
+
+        AppointmentEntity appointment = new AppointmentEntity();
+
+        appointment.setUser(user);
+        appointment.setFullName(dto.getFullName());
+        appointment.setContactNo(dto.getContactNo());
+        appointment.setService(service);
+        appointment.setStylistProfile(stylistProfile);
+        appointment.setAppointmentDate(dto.getAppointmentDate());
+        appointment.setStartTime(dto.getStartTime());
+        appointment.setEndTime(dto.getEndTime());
+        appointment.setSpecialRequests(dto.getSpecialRequests());
+        appointment.setTotal(dto.getTotal());
+        appointment.setPaymentMethod(paymentMethod);
+        appointment.setAppointmentStatus(appointmentStatus);
         appointment.setCreatedAt(new Date());
 
-        AppointmentEntity saved = appointmentRepository.save(appointment);
-        return toResponseDTO(saved);
+        AppointmentEntity savedAppointment = appointmentRepository.save(appointment);
+
+        return mapToDTO(savedAppointment);
     }
 
-    public List<AppointmentResponseDTO> getAllAppointments() {
+    public List<AppointmentDTO> getAllAppointments() {
+
         return appointmentRepository.findAll()
                 .stream()
-                .map(this::toResponseDTO)
+                .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
-    public AppointmentResponseDTO getAppointmentById(Integer id) {
+    public AppointmentDTO getAppointmentById(Integer id) {
+
         AppointmentEntity appointment = appointmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Appointment not found with id: " + id));
-        return toResponseDTO(appointment);
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        return mapToDTO(appointment);
     }
 
-    public AppointmentResponseDTO updateAppointment(Integer id, AppointmentRequestDTO dto) {
+    public List<AppointmentDTO> getAppointmentsByUser(Integer userId) {
+
+        return appointmentRepository.findByUserId(userId)
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<AppointmentDTO> getAppointmentsByStatus(Integer statusId) {
+
+        return appointmentRepository.findByAppointmentStatusId(statusId)
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<AppointmentDTO> getAppointmentsByStylist(Integer stylistId) {
+
+        return appointmentRepository.findByStylistProfileId(stylistId)
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public AppointmentDTO updateAppointment(Integer id, AppointmentDTO dto) {
+
         AppointmentEntity appointment = appointmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Appointment not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
 
-        buildAppointmentFromDTO(appointment, dto);
+        UserEntity user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        AppointmentEntity updated = appointmentRepository.save(appointment);
-        return toResponseDTO(updated);
+        ServiceEntity service = serviceRepository.findById(dto.getServiceId())
+                .orElseThrow(() -> new RuntimeException("Service not found"));
+
+        StylistProfileEntity stylistProfile = stylistProfileRepository.findById(dto.getStylistProfileId())
+                .orElseThrow(() -> new RuntimeException("Stylist profile not found"));
+
+        PaymentMethodEntity paymentMethod = paymentMethodRepository.findById(dto.getPaymentMethodId())
+                .orElseThrow(() -> new RuntimeException("Payment method not found"));
+
+        AppointmentStatusEntity appointmentStatus = appointmentStatusRepository.findById(dto.getAppointmentStatusId())
+                .orElseThrow(() -> new RuntimeException("Appointment status not found"));
+
+        appointment.setUser(user);
+        appointment.setFullName(dto.getFullName());
+        appointment.setContactNo(dto.getContactNo());
+        appointment.setService(service);
+        appointment.setStylistProfile(stylistProfile);
+        appointment.setAppointmentDate(dto.getAppointmentDate());
+        appointment.setStartTime(dto.getStartTime());
+        appointment.setEndTime(dto.getEndTime());
+        appointment.setSpecialRequests(dto.getSpecialRequests());
+        appointment.setTotal(dto.getTotal());
+        appointment.setPaymentMethod(paymentMethod);
+        appointment.setAppointmentStatus(appointmentStatus);
+
+        AppointmentEntity updatedAppointment = appointmentRepository.save(appointment);
+
+        return mapToDTO(updatedAppointment);
     }
 
     public void deleteAppointment(Integer id) {
-        if (!appointmentRepository.existsById(id)) {
-            throw new RuntimeException("Appointment not found with id: " + id);
-        }
-        appointmentRepository.deleteById(id);
+
+        AppointmentEntity appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        appointmentRepository.delete(appointment);
     }
 
-    private AppointmentEntity buildAppointmentFromDTO(AppointmentEntity appointment, AppointmentRequestDTO dto) {
+    private AppointmentDTO mapToDTO(AppointmentEntity appointment) {
 
-        UserEntity user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found: " + dto.getUserId()));
+        AppointmentDTO dto = new AppointmentDTO();
 
-        ServiceEntity service = serviceRepository.findById(dto.getServiceId())
-                .orElseThrow(() -> new RuntimeException("Service not found: " + dto.getServiceId()));
+        dto.setId(appointment.getId());
 
-        StylistProfileEntity stylist = stylistProfileRepository.findById(dto.getStylistProfileId())
-                .orElseThrow(() -> new RuntimeException("Stylist not found: " + dto.getStylistProfileId()));
-
-        PaymentMethodEntity paymentMethod = paymentMethodRepository.findById(dto.getPaymentMethodId())
-                .orElseThrow(() -> new RuntimeException("Payment method not found: " + dto.getPaymentMethodId()));
-
-        appointment.setUser(user);
-        appointment.setService(service);
-        appointment.setStylistProfile(stylist);
-        appointment.setFullName(user.getFullName());
-        appointment.setContactNo(user.getContactNo());
-
-        appointment.setAppointmentDate(
-                Date.from(dto.getAppointmentDate()
-                        .atStartOfDay(ZoneId.systemDefault()).toInstant())
+        dto.setUserId(appointment.getUser().getId());
+        dto.setUserName(
+                appointment.getUser().getFirstName() + " " +
+                        appointment.getUser().getLastName()
         );
 
-        appointment.setStartTime(dto.getStartTime());
-        appointment.setEndTime(dto.getEndTime());
+        dto.setFullName(appointment.getFullName());
+        dto.setContactNo(appointment.getContactNo());
 
-        appointment.setSpecialRequests(dto.getSpecialRequests());
+        dto.setServiceId(appointment.getService().getId());
+        dto.setServiceName(appointment.getService().getTitle());
 
-        appointment.setTotal(service.getPrice());
-
-        appointment.setPaymentMethod(paymentMethod);
-
-        return appointment;
-    }
-
-    private AppointmentResponseDTO toResponseDTO(AppointmentEntity a) {
-
-        AppointmentResponseDTO dto = new AppointmentResponseDTO();
-
-        dto.setId(a.getId());
-
-        dto.setUserId(a.getUser().getId());
-        dto.setUserName(a.getUser().getFirstName() + " " + a.getUser().getLastName());
-        dto.setContactNo(a.getContactNo());
-
-        dto.setServiceId(a.getService().getId());
-        dto.setServiceName(a.getService().getTitle());
-        dto.setServicePrice(a.getService().getPrice());
-
-        dto.setStylistProfileId(a.getStylistProfile().getId());
+        dto.setStylistProfileId(appointment.getStylistProfile().getId());
         dto.setStylistName(
-                a.getStylistProfile().getUser().getFirstName() + " " +
-                        a.getStylistProfile().getUser().getLastName()
-        );
-        dto.setStylistRole(a.getStylistProfile().getStylistRole().getStylistRole());
-
-        dto.setAppointmentDate(
-                a.getAppointmentDate().toInstant()
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDate()
+                appointment.getStylistProfile().getUser().getFirstName() + " " +
+                        appointment.getStylistProfile().getUser().getLastName()
         );
 
-        dto.setStartTime(a.getStartTime());
-        dto.setEndTime(a.getEndTime());
+        dto.setAppointmentDate(appointment.getAppointmentDate());
 
-        dto.setSpecialRequests(a.getSpecialRequests());
-        dto.setTotal(a.getTotal());
+        dto.setStartTime(appointment.getStartTime());
+        dto.setEndTime(appointment.getEndTime());
 
-        dto.setPaymentMethodId(a.getPaymentMethod().getId());
-        dto.setPaymentMethod(a.getPaymentMethod().getPaymentMethod());
+        dto.setSpecialRequests(appointment.getSpecialRequests());
 
-        dto.setAppointmentStatusId(a.getAppointmentStatus().getId());
-        dto.setAppointmentStatus(a.getAppointmentStatus().getAppointmentStatus());
+        dto.setTotal(appointment.getTotal());
 
-        dto.setCreatedAt(
-                a.getCreatedAt().toInstant()
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDateTime()
+        dto.setPaymentMethodId(appointment.getPaymentMethod().getId());
+        dto.setPaymentMethod(
+                appointment.getPaymentMethod().getPaymentMethod()
         );
+
+        dto.setAppointmentStatusId(
+                appointment.getAppointmentStatus().getId()
+        );
+
+        dto.setAppointmentStatus(
+                appointment.getAppointmentStatus().getAppointmentStatus()
+        );
+
+        dto.setCreatedAt(appointment.getCreatedAt());
 
         return dto;
     }

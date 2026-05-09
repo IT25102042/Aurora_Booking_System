@@ -4,42 +4,49 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AppointmentResponseDTO {
+public class AppointmentDTO {
 
     private Integer id;
 
+    // User
     private Integer userId;
     private String userName;
+
+    // Appointment Details
+    private String fullName;
     private String contactNo;
 
+    // Service
     private Integer serviceId;
     private String serviceName;
-    private Double servicePrice;
 
+    // Stylist
     private Integer stylistProfileId;
     private String stylistName;
-    private String stylistRole;
 
-    private LocalDate appointmentDate;
+    // Date & Time
+    private Date appointmentDate;
     private LocalTime startTime;
     private LocalTime endTime;
 
+    // Extra
     private String specialRequests;
-
     private Double total;
 
+    // Payment
     private Integer paymentMethodId;
     private String paymentMethod;
 
+    // Status
     private Integer appointmentStatusId;
     private String appointmentStatus;
 
-    private LocalDateTime createdAt;
+    // Created Date
+    private Date createdAt;
 }

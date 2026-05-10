@@ -953,7 +953,6 @@
             <li><a href="#" class="nav-link" data-page="stylist-management"><i class="fas fa-users"></i><span>Stylist Management</span></a></li>
             <li><a href="#" class="nav-link" data-page="service-management"><i class="fas fa-box"></i><span>Service Management</span></a></li>
             <li><a href="#" class="nav-link" data-page="order-management"><i class="fas fa-shopping-cart"></i><span>Appointment Management</span></a></li>
-            <li><a href="#" class="nav-link" data-page="analytics"><i class="fas fa-chart-bar"></i><span>Analytics</span></a></li>
             <li><a href="#" class="nav-link" data-page="settings"><i class="fas fa-cog"></i><span>Settings</span></a></li>
             <li><a href="#" class="nav-link" data-page="logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
         </ul>
@@ -1169,20 +1168,58 @@
     <!-- User Management -->
     <div class="content-page" id="user-management-page">
         <div class="content-section">
-            <div class="section-header">
-                <h2 class="section-title">User Management</h2>
-                <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="fas fa-plus me-2"></i>Add New User</button>
-            </div>
-            <div class="table-container">
-                <table>
-                    <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Mobile</th><th>Gender</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
-                    <tbody>
-                    <tr><td>1</td><td>Nimal Perera</td><td>nimal@gmail.com</td><td>0711111111</td><td>Male</td><td>Customer</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
-                    <tr><td>2</td><td>Kamal Silva</td><td>kamal@gmail.com</td><td>0722222222</td><td>Male</td><td>Stylist</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
-                    <tr><td>3</td><td>Saman Fernando</td><td>saman@gmail.com</td><td>0733333333</td><td>Male</td><td>Stylist</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
-                    <tr><td>4</td><td>Anu Perera</td><td>anu@gmail.com</td><td>0744444444</td><td>Female</td><td>Customer</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
-                    </tbody>
-                </table>
+            <ul class="nav nav-tabs admin-tabs" id="userManagementTabs" role="tablist">
+                <li class="nav-item"><button class="nav-link active" data-tab-target="user-list" type="button" role="tab">All Users</button></li>
+                <li class="nav-item"><button class="nav-link" data-tab-target="user-coupons" type="button" role="tab">User Coupons</button></li>
+            </ul>
+            <div class="tab-content" id="userManagementTabContent">
+                <div class="tab-pane active" id="user-list" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
+                        <h2 class="section-title">All Users</h2>
+                        <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="fas fa-plus me-2"></i>Add New User</button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Mobile</th><th>Gender</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+                            <tbody>
+                            <tr><td>1</td><td>Nimal Perera</td><td>nimal@gmail.com</td><td>0711111111</td><td>Male</td><td>Customer</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
+                            <tr><td>2</td><td>Kamal Silva</td><td>kamal@gmail.com</td><td>0722222222</td><td>Male</td><td>Stylist</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
+                            <tr><td>3</td><td>Saman Fernando</td><td>saman@gmail.com</td><td>0733333333</td><td>Male</td><td>Stylist</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
+                            <tr><td>4</td><td>Anu Perera</td><td>anu@gmail.com</td><td>0744444444</td><td>Female</td><td>Customer</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane" id="user-coupons" role="tabpanel">
+                    <div class="row mt-4">
+                        <div class="col-md-5">
+                            <h3>User Coupons</h3>
+                            <div class="form-group">
+                                <label class="form-label">Search & Select User</label>
+                                <div class="search-box mb-3"><input type="text" placeholder="Search user by email or mobile..." id="userTableSearch"><i class="fas fa-search"></i></div>
+                                <div class="selection-table-container">
+                                    <table class="selection-table" id="userSelectionTable">
+                                        <thead><tr><th>Mobile</th><th>Email</th><th>User Name</th><th>User Type</th></tr></thead>
+                                        <tbody>
+                                        <tr data-id="1"><td>0775674567</td><td>test@gmail.com</td><td>Lochana</td><td>Customer</td></tr>
+                                        <tr data-id="2"><td>0778905678</td><td>test2@gmail.com</td><td>Sasiru</td><td>Stylist</td></tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <h3>User Coupons</h3>
+                            <div class="table-container">
+                                <table id="userCouponsTable">
+                                    <thead><tr><th>Membership</th><th>Coupon Percentage(%)</th><th>Is_Used</th><th>Used_at</th><th>Actions</th></tr></thead>
+                                    <tbody><tr><td colspan="4" class="text-center py-4">Search and select a user to view their coupons</td></tr></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1246,24 +1283,65 @@
         <div class="content-section">
             <div class="section-header">
                 <h2 class="section-title">Appointment Management</h2>
-                <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#addAppointmentModal"><i class="fas fa-plus me-2"></i>Add New Appointment</button>
             </div>
             <div class="table-container">
                 <table>
                     <thead><tr><th>Apt ID</th><th>User</th><th>Customer</th><th>Mobile</th><th>Service</th><th>Stylist</th><th>Date & Time</th><th>Status</th><th>Actions</th></tr></thead>
                     <tbody>
-                    <tr><td>#APT-0001</td><td>Nimal Perera</td><td>Honey Perera</td><td>0775439833</td><td>Hair Cut Package</td><td>Kamal Silva</td><td>May 01, 2026 10:00</td><td><span class="status status-processing">Confirmed</span></td><td><button class="action-btn btn-view" data-bs-toggle="modal" data-bs-target="#appointmentQuickViewModal"><i class="fas fa-eye"></i></button><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#appointmentEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
-                    <tr><td>#APT-0002</td><td>Anu Perera</td><td>Josh Perera</td><td>0775456863</td><td>Bridal Package</td><td>Saman Fernando</td><td>May 02, 2026 12:00</td><td><span class="status status-completed">Completed</span></td><td><button class="action-btn btn-view" data-bs-toggle="modal" data-bs-target="#appointmentQuickViewModal"><i class="fas fa-eye"></i></button><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#appointmentEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
+                    <tr><td>#APT-0001</td><td>Nimal Perera</td><td>Honey Perera</td><td>0775439833</td><td>Hair Cut Package</td><td>Kamal Silva</td><td>May 01, 2026 10:00</td><td><span class="status status-processing">Confirmed</span></td><td><button class="action-btn btn-view" data-bs-toggle="modal" data-bs-target="#appointmentQuickViewModal"><i class="fas fa-eye"></i></button><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#appointmentEditModal"><i class="fas fa-edit"></i></button></td></tr>
+                    <tr><td>#APT-0002</td><td>Anu Perera</td><td>Josh Perera</td><td>0775456863</td><td>Bridal Package</td><td>Saman Fernando</td><td>May 02, 2026 12:00</td><td><span class="status status-completed">Completed</span></td><td><button class="action-btn btn-view" data-bs-toggle="modal" data-bs-target="#appointmentQuickViewModal"><i class="fas fa-eye"></i></button><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#appointmentEditModal"><i class="fas fa-edit"></i></button></td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-    <div class="content-page" id="analytics-page">
-        <div class="content-section"><h2>Analytics</h2><p>Analytics content...</p></div>
-    </div>
+
+
+
+    <!-- Settings_Management -->
     <div class="content-page" id="settings-page">
-        <div class="content-section"><h2>Settings</h2><p>Settings content...</p></div>
+        <div class="content-section">
+            <div class="section-header">
+                <h2 class="section-title">Settings</h2>
+            </div>
+            <ul class="nav nav-tabs admin-tabs" id="settingsManagementTabs" role="tablist">
+                <li class="nav-item"><button class="nav-link active" data-tab-target="loyalty-list" type="button" role="tab">Membership</button></li>
+                <li class="nav-item"><button class="nav-link" data-tab-target="carousel-images" type="button" role="tab">Carousel Images</button></li>
+            </ul>
+            <div class="tab-content" id="settingsManagementTabContent">
+                <div class="tab-pane active" id="loyalty-list" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
+                        <h5 class="mb-0">User Memberships</h5>
+                        <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#addMembershipModal"><i class="fas fa-plus me-2"></i>Add Membership</button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>ID</th><th>Membership</th><th>Rquired Total</th><th>Coupon Percentage(%)</th><th>Actions</th></tr></thead>
+                            <tbody>
+                            <tr><td>1</td><td>Bronze</td><td>0</td><td>5</td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#editMembershipModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
+                            <tr><td>1</td><td>Silver</td><td>5000</td><td>5</td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#editMembershipModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane" id="carousel-images" role="tabpanel">
+                    <div class="row mt-4">
+                        <div class="col-md-5">
+                            <h3>Manage Carousel Images</h3>
+                            <div class="form-group mt-3">
+                                <label class="form-label">Select Images</label>
+
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <h3>Images</h3>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -1398,6 +1476,38 @@
             <div class="modal-footer">
                 <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
                 <button type="button" class="btn-primary"><i class="fas fa-save me-1"></i>Save User</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Membership Modal -->
+<div class="modal fade" id="addMembershipModal" tabindex="-1" aria-labelledby="addMembershipLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addMembershipLabel"><i class="fas fa-user-plus me-2"></i>Add New Membership</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="addMembershipForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-group"><label class="form-label">Membership Name <span style="color:#dc3545;">*</span></label><input type="text" class="form-control" id="addMembershipName" placeholder="Enter Membership Name" required></div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group"><label class="form-label">Required Total <span style="color:#dc3545;">*</span></label><input type="text" class="form-control" id="addRequiredMembershipTotal" placeholder="Enter Required Total" required></div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group"><label class="form-label">Coupon Percentage(Write only the value) <span style="color:#dc3545;">*</span></label><input type="text" class="form-control" id="addCouponPercentage" placeholder="Enter Coupon Percentage" required></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
+                <button type="button" class="btn-primary"><i class="fas fa-save me-1"></i>Save Membership</button>
             </div>
         </div>
     </div>
@@ -1676,6 +1786,38 @@
     </div>
 </div>
 
+<!-- Edit Membership Modal -->
+<div class="modal fade" id="editMembershipModal" tabindex="-1" aria-labelledby="editMembershipLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editMembershipLabel"><i class="fas fa-user-plus me-2"></i>Edit New Membership</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="editMembershipForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-group"><label class="form-label">Membership Name <span style="color:#dc3545;">*</span></label><input type="text" class="form-control" id="editMembershipName" placeholder="Enter Membership Name" required></div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group"><label class="form-label">Required Total <span style="color:#dc3545;">*</span></label><input type="text" class="form-control" id="editRequiredMembershipTotal" placeholder="Enter Required Total" required></div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group"><label class="form-label">Coupon Percentage(Write only the value) <span style="color:#dc3545;">*</span></label><input type="text" class="form-control" id="editCouponPercentage" placeholder="Enter Coupon Percentage" required></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
+                <button type="button" class="btn-primary"><i class="fas fa-save me-1"></i>Edit Membership</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Edit Stylist Modal -->
 <div class="modal fade" id="stylistEditModal" tabindex="-1" aria-labelledby="stylistEditLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
@@ -1861,6 +2003,8 @@
     }
     initTabs('#serviceManagementTabs', '#serviceManagementTabContent');
     initTabs('#stylistManagementTabs', '#stylistManagementTabContent');
+    initTabs('#settingsManagementTabs', '#settingsManagementTabContent');
+    initTabs('#userManagementTabs', '#userManagementTabContent');
 
 
 

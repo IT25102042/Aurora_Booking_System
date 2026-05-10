@@ -56,4 +56,44 @@ public class ServiceController {
             return ResponseEntity.badRequest().body("Failed to add service: " + e.getMessage());
         }
     }
+
+    @PostMapping("/update")
+    public ResponseEntity<?> updateService(
+            @Valid @RequestPart("service") ServiceDto serviceDto,
+            BindingResult bindingResult,
+            @RequestPart(value = "image1", required = false) MultipartFile image1,
+            @RequestPart(value = "image2", required = false) MultipartFile image2,
+            @RequestPart(value = "image3", required = false) MultipartFile image3
+    ) {
+        // 1. Validate ServiceDto
+        if (bindingResult.hasErrors()) {
+            String errors = bindingResult.getFieldErrors().stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.joining(", "));
+            return ResponseEntity.badRequest().body(errors);
+        }
+
+        if (serviceDto.getId() == null) {
+            return ResponseEntity.badRequest().body("Service ID is required for updating");
+        }
+
+        try {
+            serviceService.updateService(serviceDto, image1, image2, image3);
+            return ResponseEntity.ok("Service updated successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Failed to update service: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteService(@PathVariable Integer id) {
+        try {
+            serviceService.deleteService(id);
+            return ResponseEntity.ok("Service deleted successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Failed to delete service: " + e.getMessage());
+        }
+    }
 }

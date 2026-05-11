@@ -1170,7 +1170,6 @@
         <div class="content-section">
             <ul class="nav nav-tabs admin-tabs" id="userManagementTabs" role="tablist">
                 <li class="nav-item"><button class="nav-link active" data-tab-target="user-list" type="button" role="tab">All Users</button></li>
-                <li class="nav-item"><button class="nav-link" data-tab-target="user-coupons" type="button" role="tab">User Coupons</button></li>
             </ul>
             <div class="tab-content" id="userManagementTabContent">
                 <div class="tab-pane active" id="user-list" role="tabpanel">
@@ -1188,36 +1187,6 @@
                             <tr><td>4</td><td>Anu Perera</td><td>anu@gmail.com</td><td>0744444444</td><td>Female</td><td>Customer</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
                             </tbody>
                         </table>
-                    </div>
-                </div>
-                <div class="tab-pane" id="user-coupons" role="tabpanel">
-                    <div class="row mt-4">
-                        <div class="col-md-5">
-                            <h3>User Coupons</h3>
-                            <div class="form-group">
-                                <label class="form-label">Search & Select User</label>
-                                <div class="search-box mb-3"><input type="text" placeholder="Search user by email or mobile..." id="userTableSearch"><i class="fas fa-search"></i></div>
-                                <div class="selection-table-container">
-                                    <table class="selection-table" id="userSelectionTable">
-                                        <thead><tr><th>Mobile</th><th>Email</th><th>User Name</th><th>User Type</th></tr></thead>
-                                        <tbody>
-                                        <tr data-id="1"><td>0775674567</td><td>test@gmail.com</td><td>Lochana</td><td>Customer</td></tr>
-                                        <tr data-id="2"><td>0778905678</td><td>test2@gmail.com</td><td>Sasiru</td><td>Stylist</td></tr>
-
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-7">
-                            <h3>User Coupons</h3>
-                            <div class="table-container">
-                                <table id="userCouponsTable">
-                                    <thead><tr><th>Membership</th><th>Coupon Percentage(%)</th><th>Is_Used</th><th>Used_at</th><th>Actions</th></tr></thead>
-                                    <tbody><tr><td colspan="4" class="text-center py-4">Search and select a user to view their coupons</td></tr></tbody>
-                                </table>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1305,27 +1274,11 @@
                 <h2 class="section-title">Settings</h2>
             </div>
             <ul class="nav nav-tabs admin-tabs" id="settingsManagementTabs" role="tablist">
-                <li class="nav-item"><button class="nav-link active" data-tab-target="loyalty-list" type="button" role="tab">Membership</button></li>
                 <li class="nav-item"><button class="nav-link" data-tab-target="carousel-images" type="button" role="tab">Carousel Images</button></li>
             </ul>
             <div class="tab-content" id="settingsManagementTabContent">
-                <div class="tab-pane active" id="loyalty-list" role="tabpanel">
-                    <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
-                        <h5 class="mb-0">User Memberships</h5>
-                        <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#addMembershipModal"><i class="fas fa-plus me-2"></i>Add Membership</button>
-                    </div>
-                    <div class="table-container">
-                        <table>
-                            <thead><tr><th>ID</th><th>Membership</th><th>Rquired Total</th><th>Coupon Percentage(%)</th><th>Actions</th></tr></thead>
-                            <tbody>
-                            <tr><td>1</td><td>Bronze</td><td>0</td><td>5</td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#editMembershipModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
-                            <tr><td>1</td><td>Silver</td><td>5000</td><td>5</td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#editMembershipModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
 
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="tab-pane" id="carousel-images" role="tabpanel">
+                <div class="tab-pane active" id="carousel-images" role="tabpanel">
                     <div class="row mt-4">
                         <div class="col-md-5">
                             <h3>Manage Carousel Images</h3>

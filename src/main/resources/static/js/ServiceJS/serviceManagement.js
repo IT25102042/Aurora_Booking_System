@@ -521,7 +521,8 @@ function addCategory() {
         if (response.ok) {
             alert("Category added successfully!");
             document.getElementById('newCategoryName').value = ''; // Clear input
-            loadCategories(); // Refresh the table
+            loadCategories();
+            loadAddServiceDropdowns();// Refresh the table and drop downs
         } else {
             return response.text().then(text => { throw new Error(text); });
         }

@@ -1175,12 +1175,13 @@
                 <div class="tab-pane active" id="user-list" role="tabpanel">
                     <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
                         <h2 class="section-title">All Users</h2>
+                        <div class="search-box mb-3"><input type="text" placeholder="Search User by Mobile or Email..." id="userTableSearch"><i class="fas fa-search"></i></div>
                         <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="fas fa-plus me-2"></i>Add New User</button>
                     </div>
                     <div class="table-container">
                         <table>
                             <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Mobile</th><th>Gender</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
-                            <tbody>
+                            <tbody id="allUsersTable">
                             <tr><td>1</td><td>Nimal Perera</td><td>nimal@gmail.com</td><td>0711111111</td><td>Male</td><td>Customer</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
                             <tr><td>2</td><td>Kamal Silva</td><td>kamal@gmail.com</td><td>0722222222</td><td>Male</td><td>Stylist</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
                             <tr><td>3</td><td>Saman Fernando</td><td>saman@gmail.com</td><td>0733333333</td><td>Male</td><td>Stylist</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
@@ -1428,7 +1429,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
-                <button type="button" class="btn-primary"><i class="fas fa-save me-1"></i>Save User</button>
+                <button type="button" class="btn-primary" id="btnSaveUser" onclick="saveUser()"><i class="fas fa-save me-1"></i>Save User</button>
             </div>
         </div>
     </div>
@@ -1733,7 +1734,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
-                <button type="button" class="btn-primary"><i class="fas fa-check me-1"></i>Update User</button>
+                <button type="button" class="btn-primary" id="btnUpdateUser" onclick="updateUser()"><i class="fas fa-check me-1"></i>Update User</button>
             </div>
         </div>
     </div>
@@ -1897,6 +1898,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <!--link your js file-->
 <script src="js/ServiceJS/serviceManagement.js"></script>
+<script src="js/UserJS/userManagement.js"></script>
 
 <script>
     // Toggle sidebar

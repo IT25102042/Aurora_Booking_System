@@ -25,6 +25,7 @@ public class AppointmentDTO {
     // Service
     private Integer serviceId;
     private String serviceName;
+    private Integer durationMinutes;
 
     // Stylist
     private Integer stylistProfileId;
@@ -37,6 +38,7 @@ public class AppointmentDTO {
 
     // Extra
     private String specialRequests;
+    private Double price;
     private Double total;
 
     // Payment

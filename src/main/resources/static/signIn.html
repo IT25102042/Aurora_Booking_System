@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURORA · Sign Up</title>
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Google Fonts (Space Grotesk + Syncopate) -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== SALON THEME VARIABLES (female default) ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* female theme (default) */
+    body {
+      --bg-primary: #f3e8e7;
+      --bg-secondary: #eed5d2;
+      --accent-1: #ecafb8;
+      --accent-2: #b92c62;
+      --pure-white: #ffffff;
+      --text-primary: #2d1f2c;
+      --text-secondary: #5c4b5a;
+      --glow-primary: rgba(236, 175, 184, 0.6);
+      --glow-secondary: rgba(185, 44, 98, 0.5);
+      --neon-glow: 0 0 30px rgba(185, 44, 98, 0.3);
+      --glass-bg: rgba(255, 255, 255, 0.25);
+      --card-shadow: 0 30px 60px -15px rgba(185, 44, 98, 0.3);
+      --gradient-1: linear-gradient(135deg, #f3e8e7, #ecafb8);
+      --gradient-2: linear-gradient(45deg, #ecafb8, #b92c62);
+    }
+
+    /* simple theme toggle (two icons) */
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1100;
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      padding: 0.5rem;
+      border-radius: 60px;
+      border: 1px solid rgba(255,255,255,0.2);
+      display: flex;
+      gap: 0.5rem;
+    }
+    .theme-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: var(--text-primary);
+      border: 2px solid var(--accent-2);
+    }
+    .theme-icon.active {
+      background: var(--accent-2);
+      color: white;
+      box-shadow: var(--neon-glow);
+    }
+
+    /* main glass container */
+    .glass-signup-container {
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px) saturate(160%);
+      -webkit-backdrop-filter: blur(15px) saturate(160%);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 2.5rem;
+      box-shadow: 0 40px 70px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.3) inset, var(--neon-glow);
+      max-width: 1300px;
+      width: 100%;
+      overflow: hidden;
+      z-index: 10;
+      position: relative;
+      animation: floatIn 1.2s ease;
+    }
+    @keyframes floatIn {
+      0% { opacity: 0; transform: translateY(40px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* left side: hero slider (fixed height for desktop) */
+    .hero-slider-side {
+      padding: 0;
+      height: auto;          /* fixed height ensures slider is visible */
+    }
+    .hero-slider {
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      animation: slideShow 30s infinite alternate-reverse;
+      border-radius: 2.5rem 0 0 2.5rem;
+    }
+    @keyframes slideShow {
+      0% { background-image: url('https://images.unsplash.com/photo-1562322140-8baeececf3df?w=800'); }
+      20% { background-image: url('https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800'); }
+      40% { background-image: url('https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800'); }
+      60% { background-image: url('https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=800'); }
+      80% { background-image: url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800'); }
+      100% { background-image: url('https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=800'); }
+    }
+
+    /* right side: signup form */
+    .signup-side {
+      padding: 3rem 3rem 3rem 2rem;
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .logo {
+      font-family: 'Syncopate', sans-serif;
+      font-weight: 700;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      background: var(--gradient-2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+    }
+
+    .tagline {
+      font-weight: 300;
+      margin-bottom: 2rem;
+      color: var(--text-secondary);
+    }
+
+    /* form styles */
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent-2);
+      font-size: 1.2rem;
+      pointer-events: none;
+    }
+
+    .form-control {
+      background: var(--glass-bg) !important;
+      border: 2px solid var(--text-secondary) !important;
+      backdrop-filter: blur(8px);
+      border-radius: 60px !important;
+      padding: 0.9rem 1.8rem !important;
+      color: var(--text-primary) !important;
+      transition: all 0.4s;
+    }
+
+    .form-control:focus {
+      border-color: var(--accent-2) !important;
+      box-shadow: var(--neon-glow) !important;
+      transform: translateY(-3px);
+    }
+
+    .form-control::placeholder {
+      color: var(--text-primary);
+      opacity: 1.5;
+    }
+
+    .form-check-input {
+      background: var(--glass-bg);
+      border: 2px solid var(--text-secondary);
+    }
+    .form-check-input:checked {
+      background-color: var(--accent-2);
+      border-color: var(--accent-2);
+    }
+    .form-check-label a {
+      color: var(--accent-2);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .btn-signup {
+      background: var(--gradient-2);
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 1rem 2rem;
+      border-radius: 60px;
+      width: 100%;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      box-shadow: var(--neon-glow);
+      transition: all 0.4s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-signup::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      transition: left 0.7s;
+    }
+    .btn-signup:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 20px 35px var(--accent-2);
+    }
+    .btn-signup:hover::before {
+      left: 100%;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      color: var(--text-secondary);
+      margin: 2rem 0;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid var(--text-secondary);
+      opacity: 0.3;
+    }
+    .divider::before { margin-right: 1rem; }
+    .divider::after { margin-left: 1rem; }
+
+    .social-buttons {
+      display: flex;
+      gap: 1.2rem;
+      justify-content: center;
+    }
+    .social-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: var(--accent-2);
+      background: var(--glass-bg);
+      backdrop-filter: blur(5px);
+      border: 2px solid var(--text-secondary);
+      transition: all 0.3s;
+    }
+    .social-btn:hover {
+      transform: translateY(-5px) scale(1.1);
+      border-color: var(--accent-2);
+      background: var(--accent-2);
+      color: white;
+      box-shadow: var(--neon-glow);
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 2rem;
+      color: var(--text-secondary);
+    }
+    .login-link a {
+      color: var(--accent-2);
+      font-weight: 600;
+      text-decoration: none;
+      position: relative;
+    }
+    .login-link a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent-2);
+      transition: width 0.3s;
+    }
+    .login-link a:hover::after {
+      width: 100%;
+    }
+
+    /* responsive: hide slider on tablet/mobile (below 992px) */
+    @media (max-width: 991.98px) {
+      .hero-slider-side {
+        display: none;
+      }
+      .signup-side {
+        padding: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- simple theme toggle removed, managed globally via home.html and localStorage -->
+
+  <!-- main glass container with slider + signup -->
+  <div class="glass-signup-container">
+    <div class="row g-0">
+      <!-- left: hero slider (fixed height 600px on desktop, hidden on mobile) -->
+      <div class="col-lg-6 hero-slider-side">
+        <div class="hero-slider"></div>
+      </div>
+      <!-- right: signup form (full width on mobile) -->
+      <div class="col-lg-6 signup-side">
+        <div class="logo">AURORA</div>
+        <h2 class="tagline">Join the beauty revolution</h2>
+
+        <div>
+          <div class="form-group">
+            <input type="email" class="form-control" id="signInEmail" placeholder="Email address" required>
+            <i class="bi bi-envelope input-icon"></i>
+          </div>
+          <div class="form-group">
+            <input type="password" class="form-control" id="signInPassword" placeholder="Password" required>
+            <i class="bi bi-lock input-icon"></i>
+          </div>
+
+          <div class="form-check mb-4">
+            <input class="form-check-input" type="checkbox" id="terms" checked>
+            <label class="form-check-label" for="terms">
+              I agree to the <a href="#">Terms</a> & <a href="#">Privacy</a>
+            </label>
+          </div>
+
+          <button type="button" class="btn-signup" onclick="signIn()">Sign In</button>
+        </div>
+
+        <div class="divider">or sign in with</div>
+
+        <div class="social-buttons">
+          <a href="#" class="social-btn"><i class="bi bi-facebook"></i></a>
+          <a href="#" class="social-btn"><i class="bi bi-google"></i></a>
+          <a href="#" class="social-btn"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" class="social-btn"><i class="bi bi-instagram"></i></a>
+        </div>
+
+        <div class="login-link">
+          New to the System? <a href="signUp.html">Register here!</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/UserJS/signIn.js"></script>
+  <script>
+    // ========== INITIALIZE THEME ==========
+    const body = document.body;
+
+    function setTheme(theme) {
+      if (theme === 'female') {
+        body.style.setProperty('--bg-primary', '#f3e8e7');
+        body.style.setProperty('--accent-2', '#b92c62');
+        body.style.setProperty('--gradient-2', 'linear-gradient(45deg, #ecafb8, #b92c62)');
+        body.style.setProperty('--text-primary', '#2d1f2c');
+        body.style.setProperty('--text-secondary', '#5c4b5a');
+      } else {
+        body.style.setProperty('--bg-primary', '#030514');
+        body.style.setProperty('--accent-2', '#7a2eff');
+        body.style.setProperty('--gradient-2', 'linear-gradient(45deg, #00d0ff, #7a2eff)');
+        body.style.setProperty('--text-primary', '#ffffff');
+        body.style.setProperty('--text-secondary', '#a0b8d4');
+      }
+    }
+
+    const savedTheme = localStorage.getItem('selectedTheme') || 'female';
+    setTheme(savedTheme);
+
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

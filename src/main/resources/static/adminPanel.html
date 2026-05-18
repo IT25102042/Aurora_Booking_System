@@ -975,8 +975,8 @@
         </div>
         <div class="header-right">
             <div class="search-box">
-                <input type="text" placeholder="Search..." id="globalSearchInput">
-                <i class="fas fa-search" id="globalSearchIcon"></i>
+                <input type="text" placeholder="Search...">
+                <i class="fas fa-search"></i>
             </div>
             <div class="theme-toggle">
                 <button class="theme-btn female active" id="femaleTheme"><i class="fas fa-venus"></i></button>
@@ -1170,54 +1170,24 @@
         <div class="content-section">
             <ul class="nav nav-tabs admin-tabs" id="userManagementTabs" role="tablist">
                 <li class="nav-item"><button class="nav-link active" data-tab-target="user-list" type="button" role="tab">All Users</button></li>
-                <li class="nav-item"><button class="nav-link" data-tab-target="user-coupons" type="button" role="tab">User Coupons</button></li>
             </ul>
             <div class="tab-content" id="userManagementTabContent">
                 <div class="tab-pane active" id="user-list" role="tabpanel">
                     <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
                         <h2 class="section-title">All Users</h2>
+                        <div class="search-box mb-3"><input type="text" placeholder="Search User by Mobile or Email..." id="userTableSearch"><i class="fas fa-search"></i></div>
                         <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="fas fa-plus me-2"></i>Add New User</button>
                     </div>
                     <div class="table-container">
                         <table>
                             <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Mobile</th><th>Gender</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
-                            <tbody>
+                            <tbody id="allUsersTable">
                             <tr><td>1</td><td>Nimal Perera</td><td>nimal@gmail.com</td><td>0711111111</td><td>Male</td><td>Customer</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
                             <tr><td>2</td><td>Kamal Silva</td><td>kamal@gmail.com</td><td>0722222222</td><td>Male</td><td>Stylist</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
                             <tr><td>3</td><td>Saman Fernando</td><td>saman@gmail.com</td><td>0733333333</td><td>Male</td><td>Stylist</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
                             <tr><td>4</td><td>Anu Perera</td><td>anu@gmail.com</td><td>0744444444</td><td>Female</td><td>Customer</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
                             </tbody>
                         </table>
-                    </div>
-                </div>
-                <div class="tab-pane" id="user-coupons" role="tabpanel">
-                    <div class="row mt-4">
-                        <div class="col-md-5">
-                            <h3>User Coupons</h3>
-                            <div class="form-group">
-                                <label class="form-label">Search & Select User</label>
-                                <div class="search-box mb-3"><input type="text" placeholder="Search user by email or mobile..." id="userTableSearch"><i class="fas fa-search"></i></div>
-                                <div class="selection-table-container">
-                                    <table class="selection-table" id="userSelectionTable">
-                                        <thead><tr><th>Mobile</th><th>Email</th><th>User Name</th><th>User Type</th></tr></thead>
-                                        <tbody>
-                                        <tr data-id="1"><td>0775674567</td><td>test@gmail.com</td><td>Lochana</td><td>Customer</td></tr>
-                                        <tr data-id="2"><td>0778905678</td><td>test2@gmail.com</td><td>Sasiru</td><td>Stylist</td></tr>
-
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-7">
-                            <h3>User Coupons</h3>
-                            <div class="table-container">
-                                <table id="userCouponsTable">
-                                    <thead><tr><th>Membership</th><th>Coupon Percentage(%)</th><th>Is_Used</th><th>Used_at</th><th>Actions</th></tr></thead>
-                                    <tbody><tr><td colspan="4" class="text-center py-4">Search and select a user to view their coupons</td></tr></tbody>
-                                </table>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1241,9 +1211,9 @@
                         <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#addStylistModal"><i class="fas fa-plus me-2"></i>Add Stylist</button>
                     </div>
                     <div class="table-container">
-                        <table id="stylistsTable">
+                        <table>
                             <thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Experience</th><th>Bio</th><th>Status</th><th>Actions</th></tr></thead>
-                            <tbody id="stylistsTableBody">
+                            <tbody>
                             <tr><td>1</td><td>Kamal Silva</td><td>Hair Stylist</td><td>5 Years</td><td>Expert hair stylist</td><td><span class="status status-completed">Available</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#stylistEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
                             <tr><td>2</td><td>Saman Fernando</td><td>Makeup Artist</td><td>4 Years</td><td>Professional makeup artist</td><td><span class="status status-completed">Available</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#stylistEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
                             </tbody>
@@ -1305,27 +1275,11 @@
                 <h2 class="section-title">Settings</h2>
             </div>
             <ul class="nav nav-tabs admin-tabs" id="settingsManagementTabs" role="tablist">
-                <li class="nav-item"><button class="nav-link active" data-tab-target="loyalty-list" type="button" role="tab">Membership</button></li>
                 <li class="nav-item"><button class="nav-link" data-tab-target="carousel-images" type="button" role="tab">Carousel Images</button></li>
             </ul>
             <div class="tab-content" id="settingsManagementTabContent">
-                <div class="tab-pane active" id="loyalty-list" role="tabpanel">
-                    <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
-                        <h5 class="mb-0">User Memberships</h5>
-                        <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#addMembershipModal"><i class="fas fa-plus me-2"></i>Add Membership</button>
-                    </div>
-                    <div class="table-container">
-                        <table>
-                            <thead><tr><th>ID</th><th>Membership</th><th>Rquired Total</th><th>Coupon Percentage(%)</th><th>Actions</th></tr></thead>
-                            <tbody>
-                            <tr><td>1</td><td>Bronze</td><td>0</td><td>5</td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#editMembershipModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
-                            <tr><td>1</td><td>Silver</td><td>5000</td><td>5</td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#editMembershipModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
 
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="tab-pane" id="carousel-images" role="tabpanel">
+                <div class="tab-pane active" id="carousel-images" role="tabpanel">
                     <div class="row mt-4">
                         <div class="col-md-5">
                             <h3>Manage Carousel Images</h3>
@@ -1475,7 +1429,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
-                <button type="button" class="btn-primary"><i class="fas fa-save me-1"></i>Save User</button>
+                <button type="button" class="btn-primary" id="btnSaveUser" onclick="saveUser()"><i class="fas fa-save me-1"></i>Save User</button>
             </div>
         </div>
     </div>
@@ -1533,18 +1487,16 @@
                                         <input type="text" class="form-control" id="searchByStlistnoenamil" placeholder="e.g. 0774567432/kamal@gmail.com">
                                     </div>
                                     <div class="col-md-5">
-                                        <button type="button" class="btn-primary" id="getStylistByEmailOrMobileBtn" onclick="searchStylists()">GET</button>
+                                        <button type="button" class="btn-primary">GET</button>
                                     </div>
                                 </div>
-                                <small class="text-muted d-block mt-2" id="stylistSearchMessage"></small>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="form-label" >Selected User </label>
-                                <input type="hidden" id="selectedStylistUserId">
-                                <label class="form-label" ><span style="color:#dc3545;">ID: </span><span id="selectedStylistUserIdText">-</span></label>
-                                <label class="form-label" ><span style="color:#dc3545;">Name: </span><span id="selectedStylistUserNameText">-</span></label>
+                                <label class="form-label" ><span style="color:#dc3545;">ID: </span></label>
+                                <label class="form-label" ><span style="color:#dc3545;">Name: </span></label>
 
                             </div>
                         </div>
@@ -1568,13 +1520,9 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer d-flex justify-content-between">
-                <div id="saveStylistError" class="text-danger small fw-bold"></div>
-                <div>
-                    <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
-                    <button type="button" class="btn-primary" id="saveStylistBtn"><i class="fas fa-save me-1"></i>Save Stylist</button>
-                </div>
-                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
+                <button type="button" class="btn-primary"><i class="fas fa-save me-1"></i>Save Stylist</button>
             </div>
         </div>
     </div>
@@ -1786,7 +1734,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
-                <button type="button" class="btn-primary"><i class="fas fa-check me-1"></i>Update User</button>
+                <button type="button" class="btn-primary" id="btnUpdateUser" onclick="updateUser()"><i class="fas fa-check me-1"></i>Update User</button>
             </div>
         </div>
     </div>
@@ -1836,7 +1784,7 @@
                 <div id="editStylistForm">
                     <input type="hidden" id="editStylistId" value="1">
                     <div class="alert alert-info mb-3" style="background:var(--bg-body);border:1px solid var(--border-color);color:var(--dark-text);">
-                        <i class="fas fa-info-circle me-1"></i> Editing stylist profile for <strong id="editStylistNameText">Kamal Silva</strong> (User ID: <span id="editStylistUserIdText">2</span>)
+                        <i class="fas fa-info-circle me-1"></i> Editing stylist profile for <strong>Kamal Silva</strong> (User ID: 2)
                     </div>
                     <div class="row g-3">
                         <div class="col-md-6">
@@ -1856,7 +1804,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
-                <button type="button" class="btn-primary" id="updateStylistBtn" onclick="updateStylist()"><i class="fas fa-check me-1"></i>Update Stylist</button>
+                <button type="button" class="btn-primary"><i class="fas fa-check me-1"></i>Update Stylist</button>
             </div>
         </div>
     </div>
@@ -1950,7 +1898,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <!--link your js file-->
 <script src="js/ServiceJS/serviceManagement.js"></script>
-<script src="js/StylistJS/stylistProfiles.js?v=4"></script>
+<script src="js/UserJS/userManagement.js"></script>
 
 <script>
     // Toggle sidebar

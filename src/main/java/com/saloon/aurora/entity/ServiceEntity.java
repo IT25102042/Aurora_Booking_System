@@ -44,6 +44,7 @@ public class ServiceEntity {
     @JoinColumn(name = "service_status_id", nullable = false)
     private ServiceStatusEntity serviceStatus;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", nullable = false)
     private Date createdAt;
 
@@ -54,4 +55,7 @@ public class ServiceEntity {
             inverseJoinColumns = @JoinColumn(name = "stylist_profile_id")
     )
     private Set<StylistProfileEntity> stylistProfiles = new HashSet<>();
+
+    @ManyToMany(mappedBy = "wishlistServices")
+    private Set<UserEntity> wishedUsers = new HashSet<>();
 }

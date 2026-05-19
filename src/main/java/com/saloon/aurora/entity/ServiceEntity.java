@@ -54,8 +54,12 @@ public class ServiceEntity {
             joinColumns = @JoinColumn(name = "service_id"),
             inverseJoinColumns = @JoinColumn(name = "stylist_profile_id")
     )
+    @lombok.EqualsAndHashCode.Exclude
+    @lombok.ToString.Exclude
     private Set<StylistProfileEntity> stylistProfiles = new HashSet<>();
 
     @ManyToMany(mappedBy = "wishlistServices")
+    @lombok.EqualsAndHashCode.Exclude
+    @lombok.ToString.Exclude
     private Set<UserEntity> wishedUsers = new HashSet<>();
 }

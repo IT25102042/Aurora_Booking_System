@@ -62,6 +62,8 @@ public class UserEntity {
             joinColumns = @JoinColumn(name = "users_id"),
             inverseJoinColumns = @JoinColumn(name = "service_id")
     )
+    @lombok.EqualsAndHashCode.Exclude
+    @lombok.ToString.Exclude
     private Set<ServiceEntity> wishlistServices = new HashSet<>();
 
 }

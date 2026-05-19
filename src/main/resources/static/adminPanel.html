@@ -1201,14 +1201,18 @@
                     <div class="tab-pane active" id="stylists-list" role="tabpanel">
                         <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
                             <h5 class="mb-0">Stylist Profiles</h5>
+                            <div class="search-box">
+                                <input type="text" placeholder="Search..." id="globalSearchInput">
+                                <i class="fas fa-search" id="globalSearchIcon"></i>
+                            </div>
                             <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#addStylistModal"><i class="fas fa-plus me-2"></i>Add Stylist</button>
                         </div>
                         <div class="table-container">
-                            <table>
+                            <table id="stylistsTable">
                                 <thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Experience</th><th>Bio</th><th>Status</th><th>Actions</th></tr></thead>
-                                <tbody>
-                                    <tr><td>1</td><td>Kamal Silva</td><td>Hair Stylist</td><td>5 Years</td><td>Expert hair stylist</td><td><span class="status status-completed">Available</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#stylistEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
-                                    <tr><td>2</td><td>Saman Fernando</td><td>Makeup Artist</td><td>4 Years</td><td>Professional makeup artist</td><td><span class="status status-completed">Available</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#stylistEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
+                                <tbody id="stylistsTableBody">
+                                <tr><td>1</td><td>Kamal Silva</td><td>Hair Stylist</td><td>5 Years</td><td>Expert hair stylist</td><td><span class="status status-completed">Available</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#stylistEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
+                                <tr><td>2</td><td>Saman Fernando</td><td>Makeup Artist</td><td>4 Years</td><td>Professional makeup artist</td><td><span class="status status-completed">Available</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#stylistEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -1425,21 +1429,23 @@
                                             <input type="text" class="form-control" id="searchByStlistnoenamil" placeholder="e.g. 0774567432/kamal@gmail.com">
                                         </div>
                                         <div class="col-md-5">
-                                            <button type="button" class="btn-primary">GET</button>
+                                            <button type="button" class="btn-primary" id="getStylistByEmailOrMobileBtn" onclick="searchStylists()">GET</button>
                                         </div>
                                     </div>
+                                    <small class="text-muted d-block mt-2" id="stylistSearchMessage"></small>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" >Selected User </label>
-                                    <label class="form-label" ><span style="color:#dc3545;">ID: </span></label>
-                                    <label class="form-label" ><span style="color:#dc3545;">Name: </span></label>
+                                    <input type="hidden" id="selectedStylistUserId">
+                                    <label class="form-label" ><span style="color:#dc3545;">ID: </span><span id="selectedStylistUserIdText">-</span></label>
+                                    <label class="form-label" ><span style="color:#dc3545;">Name: </span><span id="selectedStylistUserNameText">-</span></label>
 
                                 </div>
                             </div>
 
-                            
+
                         </div>
                         <h6 class="text-uppercase fw-bold mb-3 mt-4 pb-2 border-bottom" style="color:var(--primary);font-size:0.85rem;letter-spacing:1px;">Stylist Profile</h6>
                         <div class="row g-3">
@@ -1458,12 +1464,16 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
-                    <button type="button" class="btn-primary"><i class="fas fa-save me-1"></i>Save Stylist</button>
+                <div class="modal-footer d-flex justify-content-between">
+                    <div id="saveStylistError" class="text-danger small fw-bold"></div>
+                    <div>
+                        <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
+                        <button type="button" class="btn-primary" id="saveStylistBtn"><i class="fas fa-save me-1"></i>Save Stylist</button>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- Add Service Modal -->
@@ -1666,7 +1676,7 @@
                     <div id="editStylistForm">
                         <input type="hidden" id="editStylistId" value="1">
                         <div class="alert alert-info mb-3" style="background:var(--bg-body);border:1px solid var(--border-color);color:var(--dark-text);">
-                            <i class="fas fa-info-circle me-1"></i> Editing stylist profile for <strong>Kamal Silva</strong> (User ID: 2)
+                            <i class="fas fa-info-circle me-1"></i> Editing stylist profile for <strong id="editStylistNameText">Kamal Silva</strong> (User ID: <span id="editStylistUserIdText">2</span>)
                         </div>
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -1686,7 +1696,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
-                    <button type="button" class="btn-primary"><i class="fas fa-check me-1"></i>Update Stylist</button>
+                    <button type="button" class="btn-primary" id="updateStylistBtn" onclick="updateStylist()"><i class="fas fa-check me-1"></i>Update Stylist</button>
                 </div>
             </div>
         </div>
@@ -1752,6 +1762,7 @@
     <script src="js/ServiceJS/serviceDataLoad.js?v=2"></script>
 
     <script src="js/AppointmentJS/appointmentManagement.js"></script>
+    <script src="js/StylistJS/stylistProfiles.js?v=4"></script>
 
 
     <script>

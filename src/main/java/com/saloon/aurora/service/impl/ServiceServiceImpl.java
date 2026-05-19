@@ -203,4 +203,28 @@ public class ServiceServiceImpl implements ServiceService {
         }
         return directoryToBeDeleted.delete();
     }
+
+    @Override
+    public List<ServiceDto> getServicesByStylistProfileId(Integer stylistId) {
+        List<ServiceEntity> serviceEntities = serviceRepository.findByStylistProfiles_Id(stylistId);
+        List<ServiceDto> serviceDtos = new ArrayList<>();
+
+        for (ServiceEntity entity : serviceEntities) {
+            ServiceDto dto = modelMapper.map(entity, ServiceDto.class);
+            if (entity.getCategory() != null) {
+                dto.setCategoryId(entity.getCategory().getId());
+                dto.setCategoryName(entity.getCategory().getCategory());
+            }
+            if (entity.getGender() != null) {
+                dto.setGenderId(entity.getGender().getId());
+                dto.setGenderName(entity.getGender().getGender());
+            }
+            if (entity.getServiceStatus() != null) {
+                dto.setServiceStatusId(entity.getServiceStatus().getId());
+                dto.setServiceStatusName(entity.getServiceStatus().getServiceStatus());
+            }
+            serviceDtos.add(dto);
+        }
+        return serviceDtos;
+    }
 }

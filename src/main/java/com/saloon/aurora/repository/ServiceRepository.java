@@ -14,4 +14,6 @@ public interface ServiceRepository extends JpaRepository<ServiceEntity, Integer>
 
     // Find all services by status name (e.g., "Available")
     List<ServiceEntity> findByServiceStatus_ServiceStatusIgnoreCase(String statusName);
+
+    java.util.List<ServiceEntity> findByStylistProfiles_Id(Integer stylistProfileId);
 }

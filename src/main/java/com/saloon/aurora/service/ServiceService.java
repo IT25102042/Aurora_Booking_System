@@ -11,4 +11,5 @@ public interface ServiceService {
     void addService(ServiceDto serviceDto, MultipartFile image1, MultipartFile image2, MultipartFile image3) throws IOException;
     void updateService(ServiceDto serviceDto, MultipartFile image1, MultipartFile image2, MultipartFile image3) throws IOException;
     void deleteService(Integer id);
+    List<ServiceDto> getServicesByStylistProfileId(Integer stylistId);
 }

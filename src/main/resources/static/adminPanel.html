@@ -953,7 +953,7 @@
                 <li><a href="#" class="nav-link" data-page="stylist-management"><i class="fas fa-users"></i><span>Stylist Management</span></a></li>
                 <li><a href="#" class="nav-link" data-page="service-management"><i class="fas fa-box"></i><span>Service Management</span></a></li>
                 <li><a href="#" class="nav-link" data-page="order-management"><i class="fas fa-shopping-cart"></i><span>Appointment Management</span></a></li>
-                <li><a href="#" class="nav-link" data-page="analytics"><i class="fas fa-chart-bar"></i><span>Analytics</span></a></li>
+                <li><a href="#" class="nav-link" data-page="reviews"><i class="fas fa-chart-bar"></i><span>Review Management</span></a></li>
                 <li><a href="#" class="nav-link" data-page="settings"><i class="fas fa-cog"></i><span>Settings</span></a></li>
                 <li><a href="#" class="nav-link" data-page="logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
             </ul>
@@ -1066,7 +1066,7 @@
                         <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
                             <h5 class="mb-0">Services</h5>
                             <div class="search-box">
-                                <input type="text" placeholder="Search..." id="serviceSearchInput">
+                                <input type="text" placeholder="Search..." id="serviceSearchInput1">
                                 <i class="fas fa-search"></i>
                             </div>
                             <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#addServiceModal"><i class="fas fa-plus me-2"></i>Add Service</button>
@@ -1077,24 +1077,7 @@
                                 <tr><th>ID</th><th>Service Title</th><th>Category</th><th>Gender</th><th>Price</th><th>Duration</th><th>Status</th><th>Actions</th></tr>
                                 </thead>
                                 <tbody id = "serviceTableBody">
-                                <tr>
-                                    <td>1</td><td>Hair Cut Package</td><td>Packages</td><td>Male</td><td>Rs. 1500</td><td>60 mins</td>
-                                    <td><span class="status status-completed">Available</span></td>
-                                    <td>
-                                        <button class="action-btn btn-view" data-bs-toggle="modal" data-bs-target="#serivceQuickViewModal"><i class="fas fa-eye"></i></button>
-                                        <button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#serviceEditModal"><i class="fas fa-edit"></i></button>
-                                        <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td><td>Bridal Package</td><td>Packages</td><td>Female</td><td>Rs. 10000</td><td>180 mins</td>
-                                    <td><span class="status status-completed">Available</span></td>
-                                    <td>
-                                        <button class="action-btn btn-view" data-bs-toggle="modal" data-bs-target="#serivceQuickViewModal"><i class="fas fa-eye"></i></button>
-                                        <button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#serviceEditModal"><i class="fas fa-edit"></i></button>
-                                        <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
-                                    </td>
-                                </tr>
+                                <tr><td colspan="9" style="text-align:center;padding:30px;color:var(--text-muted);"><i class="fas fa-spinner fa-spin me-2"></i>Loading Services…</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -1114,9 +1097,7 @@
                                     <table>
                                         <thead><tr><th>ID</th><th>Category</th><th>Actions</th></tr></thead>
                                         <tbody id="categoryTableBody">
-                                        <tr><td>1</td><td>Hair</td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#serviceEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
-                                        <tr><td>2</td><td>Makeup</td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#serviceEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
-                                        <tr><td>3</td><td>Packages</td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#serviceEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
+                                        <tr><td colspan="9" style="text-align:center;padding:30px;color:var(--text-muted);"><i class="fas fa-spinner fa-spin me-2"></i>Loading Categories…</td></tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -1134,10 +1115,7 @@
                                         <table class="selection-table" id="serviceSelectionTable">
                                             <thead><tr><th>ID</th><th>Service Name</th><th>Category</th></tr></thead>
                                             <tbody id="serviceSearchForStylist">
-                                            <tr data-id="1"><td>1</td><td>Hair Cut Package</td><td>Packages</td></tr>
-                                            <tr data-id="2"><td>2</td><td>Bridal Package</td><td>Packages</td></tr>
-                                            <tr data-id="3"><td>3</td><td>Hair Tinting</td><td>Hair</td></tr>
-                                            <tr data-id="4"><td>4</td><td>Eye Makeup</td><td>Makeup</td></tr>
+                                            <tr><td colspan="3" style="text-align:center;padding:20px;color:var(--text-muted);"><i class="fas fa-spinner fa-spin me-2"></i>Loading Services…</td></tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -1146,20 +1124,17 @@
                                     <label class="form-label">Select Stylist</label>
                                     <select class="form-select" id="stylistDropdown">
                                         <option value="">-- Choose Stylist --</option>
-                                        <option value="1">Kamal Silva (Hair Stylist)</option>
-                                        <option value="2">Saman Fernando (Makeup Artist)</option>
                                     </select>
                                 </div>
                                 <button type="button" class="btn-primary w-100 mt-2" id="assignStylistBtn" disabled><i class="fas fa-link me-2"></i>Assign Stylist</button>
                             </div>
                             <div class="col-md-6">
                                 <div class="d-flex justify-content-between align-items-center mb-3"><h3>Assigned Service Stylists</h3></div>
-                                <div class="table-container">
+                                <div class="table-container" style="max-height:380px;overflow-y:auto;">
                                     <table>
-                                        <thead><tr><th>Service</th><th>Stylist</th></tr></thead>
+                                        <thead><tr><th>Service</th><th>Stylist</th><th>Role</th><th>Actions</th></tr></thead>
                                         <tbody id="assignedServiceStyliststable">
-                                        <tr><td>Hair Cut Package</td><td>Kamal Silva</td></tr>
-                                        <tr><td>Bridal Package</td><td>Saman Fernando</td></tr>
+                                        <tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text-muted);"><i class="fas fa-spinner fa-spin me-2"></i>Loading Assignments…</td></tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -1187,10 +1162,7 @@
                             <table>
                                 <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Mobile</th><th>Gender</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
                                 <tbody id="allUsersTable">
-                                <tr><td>1</td><td>Nimal Perera</td><td>nimal@gmail.com</td><td>0711111111</td><td>Male</td><td>Customer</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
-                                <tr><td>2</td><td>Kamal Silva</td><td>kamal@gmail.com</td><td>0722222222</td><td>Male</td><td>Stylist</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
-                                <tr><td>3</td><td>Saman Fernando</td><td>saman@gmail.com</td><td>0733333333</td><td>Male</td><td>Stylist</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
-                                <tr><td>4</td><td>Anu Perera</td><td>anu@gmail.com</td><td>0744444444</td><td>Female</td><td>Customer</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
+                                <tr><td colspan="9" style="text-align:center;padding:30px;color:var(--text-muted);"><i class="fas fa-spinner fa-spin me-2"></i>Loading Users…</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -1284,6 +1256,32 @@
                         <thead><tr><th>Apt ID</th><th>User</th><th>Customer</th><th>Mobile</th><th>Service</th><th>Stylist</th><th>Date &amp; Time</th><th>Status</th><th>Actions</th></tr></thead>
                         <tbody id="aptTableBody">
                         <tr><td colspan="9" style="text-align:center;padding:30px;color:var(--text-muted);"><i class="fas fa-spinner fa-spin me-2"></i>Loading appointments…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Review Management -->
+        <div class="content-page" id="reviews-page">
+            <div class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Review Management</h2>
+                    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                        <div class="search-box">
+                            <input type="text" id="reviewSearchInput" placeholder="Search reviews...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <button class="btn-primary" onclick="" style="padding:8px 16px;font-size:0.85rem;">
+                            <i class="fas fa-sync-alt me-1"></i>Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Review ID</th><th>User</th><th>Appointment ID</th><th>Ratings</th><th>Review Text</th><th>Created_At</th><th>Actions</th></tr></thead>
+                        <tbody id="reviewTableBody">
+                        <tr><td colspan="9" style="text-align:center;padding:30px;color:var(--text-muted);"><i class="fas fa-spinner fa-spin me-2"></i>Loading Reviews…</td></tr>
                         </tbody>
                     </table>
                 </div>

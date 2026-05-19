@@ -5,14 +5,17 @@ import com.saloon.aurora.entity.CategoryEntity;
 import com.saloon.aurora.entity.GenderEntity;
 import com.saloon.aurora.entity.ServiceEntity;
 import com.saloon.aurora.entity.ServiceStatusEntity;
+import com.saloon.aurora.entity.StylistProfileEntity;
 import com.saloon.aurora.repository.CategoryRepository;
 import com.saloon.aurora.repository.GenderRepository;
 import com.saloon.aurora.repository.ServiceRepository;
 import com.saloon.aurora.repository.ServiceStatusRepository;
+import com.saloon.aurora.repository.StylistProfileRepository;
 import com.saloon.aurora.service.ServiceService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -21,12 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +34,7 @@ public class ServiceServiceImpl implements ServiceService {
     final CategoryRepository categoryRepository;
     final GenderRepository genderRepository;
     final ServiceStatusRepository serviceStatusRepository;
+    final StylistProfileRepository stylistProfileRepository;
     final ModelMapper modelMapper;
 
     @Override
@@ -226,5 +225,58 @@ public class ServiceServiceImpl implements ServiceService {
             serviceDtos.add(dto);
         }
         return serviceDtos;
+    }
+
+    @Override
+    @Transactional
+    public void assignStylistToService(Integer serviceId, Integer stylistProfileId) {
+        ServiceEntity service = serviceRepository.findById(serviceId)
+                .orElseThrow(() -> new RuntimeException("Service not found with ID: " + serviceId));
+
+        StylistProfileEntity stylist = stylistProfileRepository.findById(stylistProfileId)
+                .orElseThrow(() -> new RuntimeException("Stylist Profile not found with ID: " + stylistProfileId));
+
+        if (service.getStylistProfiles().contains(stylist)) {
+            throw new RuntimeException("This stylist is already assigned to this service!");
+        }
+
+        service.getStylistProfiles().add(stylist);
+        serviceRepository.save(service);
+    }
+
+    @Override
+    @Transactional
+    public void unassignStylistFromService(Integer serviceId, Integer stylistProfileId) {
+        ServiceEntity service = serviceRepository.findById(serviceId)
+                .orElseThrow(() -> new RuntimeException("Service not found with ID: " + serviceId));
+
+        StylistProfileEntity stylist = stylistProfileRepository.findById(stylistProfileId)
+                .orElseThrow(() -> new RuntimeException("Stylist Profile not found with ID: " + stylistProfileId));
+
+        if (!service.getStylistProfiles().contains(stylist)) {
+            throw new RuntimeException("This stylist is not assigned to this service!");
+        }
+
+        service.getStylistProfiles().remove(stylist);
+        serviceRepository.save(service);
+    }
+
+    @Override
+    public List<Map<String, Object>> getAllServiceStylistAssignments() {
+        List<ServiceEntity> services = serviceRepository.findAll();
+        List<Map<String, Object>> assignments = new ArrayList<>();
+
+        for (ServiceEntity service : services) {
+            for (StylistProfileEntity stylist : service.getStylistProfiles()) {
+                Map<String, Object> assignment = new LinkedHashMap<>();
+                assignment.put("serviceId", service.getId());
+                assignment.put("serviceTitle", service.getTitle());
+                assignment.put("stylistProfileId", stylist.getId());
+                assignment.put("stylistName", stylist.getUser().getFirstName() + " " + stylist.getUser().getLastName());
+                assignment.put("stylistRole", stylist.getStylistRole().getStylistRole());
+                assignments.add(assignment);
+            }
+        }
+        return assignments;
     }
 }

@@ -1250,24 +1250,32 @@
             <div class="content-section">
                 <div class="section-header">
                     <h2 class="section-title">Appointment Management</h2>
-                    <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#addAppointmentModal"><i class="fas fa-plus me-2"></i>Add New Appointment</button>
+                    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                        <div class="search-box">
+                            <input type="text" id="aptSearchInput" placeholder="Search appointments...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <select id="aptStatusFilter" style="padding:8px 14px;border:1px solid var(--border-color);border-radius:20px;background:var(--card-bg);color:var(--dark-text);font-family:inherit;font-size:0.9rem;cursor:pointer;">
+                            <option value="">All Statuses</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Confirmed">Confirmed</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                        <button class="btn-primary" onclick="aptLoadAll()" style="padding:8px 16px;font-size:0.85rem;">
+                            <i class="fas fa-sync-alt me-1"></i>Refresh
+                        </button>
+                    </div>
                 </div>
                 <div class="table-container">
                     <table>
-                        <thead><tr><th>Apt ID</th><th>User</th><th>Customer</th><th>Mobile</th><th>Service</th><th>Stylist</th><th>Date & Time</th><th>Status</th><th>Actions</th></tr></thead>
-                        <tbody>
-                            <tr><td>#APT-0001</td><td>Nimal Perera</td><td>Honey Perera</td><td>0775439833</td><td>Hair Cut Package</td><td>Kamal Silva</td><td>May 01, 2026 10:00</td><td><span class="status status-processing">Confirmed</span></td><td><button class="action-btn btn-view" data-bs-toggle="modal" data-bs-target="#appointmentQuickViewModal"><i class="fas fa-eye"></i></button><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#appointmentEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
-                            <tr><td>#APT-0002</td><td>Anu Perera</td><td>Josh Perera</td><td>0775456863</td><td>Bridal Package</td><td>Saman Fernando</td><td>May 02, 2026 12:00</td><td><span class="status status-completed">Completed</span></td><td><button class="action-btn btn-view" data-bs-toggle="modal" data-bs-target="#appointmentQuickViewModal"><i class="fas fa-eye"></i></button><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#appointmentEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
+                        <thead><tr><th>Apt ID</th><th>User</th><th>Customer</th><th>Mobile</th><th>Service</th><th>Stylist</th><th>Date &amp; Time</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="aptTableBody">
+                        <tr><td colspan="9" style="text-align:center;padding:30px;color:var(--text-muted);"><i class="fas fa-spinner fa-spin me-2"></i>Loading appointments…</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
-        <div class="content-page" id="analytics-page">
-            <div class="content-section"><h2>Analytics</h2><p>Analytics content...</p></div>
-        </div>
-        <div class="content-page" id="settings-page">
-            <div class="content-section"><h2>Settings</h2><p>Settings content...</p></div>
         </div>
     </div>
 
@@ -1334,28 +1342,30 @@
                                 <i class="fas fa-calendar-alt"></i>
                             </div>
                             <div style="text-align:center;padding:10px;">
-                                <span class="status status-processing" style="font-size:0.95rem;padding:8px 18px;">Confirmed</span>
+                                <span id="viewAptStatusBadge" class="status status-processing" style="font-size:0.95rem;padding:8px 18px;">—</span>
                             </div>
                         </div>
                         <div class="detail-info">
-                            <h4 class="mb-0" style="font-weight:700;color:var(--dark-text);">#APT-0001</h4>
-                            <p class="text-muted mb-0" style="font-size:0.85rem;color:var(--text-muted);">Created: Apr 28, 2026</p>
+                            <h4 id="viewAptId" class="mb-0" style="font-weight:700;color:var(--dark-text);">—</h4>
+                            <p id="viewAptCreated" class="text-muted mb-0" style="font-size:0.85rem;color:var(--text-muted);">Created: —</p>
                             <div class="appointment-detail-card">
-                                <div class="info-row"><i class="fas fa-user"></i><span class="info-label">Customer</span><span class="info-value">Nimal Perera</span></div>
-                                <div class="info-row"><i class="fas fa-spa"></i><span class="info-label">Service</span><span class="info-value">Hair Cut Package</span></div>
-                                <div class="info-row"><i class="fas fa-user-tie"></i><span class="info-label">Stylist</span><span class="info-value">Kamal Silva</span></div>
-                                <div class="info-row"><i class="fas fa-calendar-day"></i><span class="info-label">Date</span><span class="info-value">May 01, 2026</span></div>
-                                <div class="info-row"><i class="fas fa-clock"></i><span class="info-label">Time</span><span class="info-value">10:00 AM – 11:00 AM</span></div>
-                                <div class="info-row"><i class="fas fa-credit-card"></i><span class="info-label">Payment</span><span class="info-value">Cash</span></div>
-                                <div class="info-row"><i class="fas fa-dollar-sign"></i><span class="info-label">Total</span><span class="info-value" style="font-weight:700;font-size:1.1rem;">Rs. 1,500.00</span></div>
-                                <div class="info-row"><i class="fas fa-comment"></i><span class="info-label">Notes</span><span class="info-value">Normal haircut</span></div>
+                                <div class="info-row"><i class="fas fa-user"></i><span class="info-label">User</span><span class="info-value" id="viewAptUser">—</span></div>
+                                <div class="info-row"><i class="fas fa-id-card"></i><span class="info-label">Customer</span><span class="info-value" id="viewAptCustomer">—</span></div>
+                                <div class="info-row"><i class="fas fa-spa"></i><span class="info-label">Service</span><span class="info-value" id="viewAptService">—</span></div>
+                                <div class="info-row"><i class="fas fa-user-tie"></i><span class="info-label">Stylist</span><span class="info-value" id="viewAptStylist">—</span></div>
+                                <div class="info-row"><i class="fas fa-calendar-day"></i><span class="info-label">Date</span><span class="info-value" id="viewAptDate">—</span></div>
+                                <div class="info-row"><i class="fas fa-clock"></i><span class="info-label">Time</span><span class="info-value" id="viewAptTime">—</span></div>
+                                <div class="info-row"><i class="fas fa-credit-card"></i><span class="info-label">Payment</span><span class="info-value" id="viewAptPayment">—</span></div>
+                                <div class="info-row"><i class="fas fa-dollar-sign"></i><span class="info-label">Total</span><span class="info-value" id="viewAptTotal" style="font-weight:700;font-size:1.1rem;">—</span></div>
+                                <div class="info-row"><i class="fas fa-phone"></i><span class="info-label">Mobile</span><span class="info-value" id="viewAptMobile">—</span></div>
+                                <div class="info-row"><i class="fas fa-comment"></i><span class="info-label">Notes</span><span class="info-value" id="viewAptNotes">—</span></div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Close</button>
-                    <button type="button" class="btn-primary" data-bs-toggle="modal" data-bs-target="#appointmentEditModal" data-bs-dismiss="modal"><i class="fas fa-edit me-1"></i>Edit Appointment</button>
+                    <button type="button" class="btn-primary" id="viewToEditBtn"><i class="fas fa-edit me-1"></i>Edit Appointment</button>
                 </div>
             </div>
         </div>
@@ -1749,7 +1759,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
-                    <button type="button" class="btn-primary"><i class="fas fa-check me-1"></i>Update Appointment</button>
+                    <button type="button" class="btn-primary" id="aptSaveBtn" onclick="aptSaveEdit()"><i class="fas fa-check me-1"></i>Update Appointment</button>
                 </div>
             </div>
         </div>

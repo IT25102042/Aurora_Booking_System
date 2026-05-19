@@ -1065,32 +1065,36 @@
                     <div class="tab-pane active" id="services" role="tabpanel">
                         <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
                             <h5 class="mb-0">Services</h5>
+                            <div class="search-box">
+                                <input type="text" placeholder="Search..." id="serviceSearchInput">
+                                <i class="fas fa-search"></i>
+                            </div>
                             <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#addServiceModal"><i class="fas fa-plus me-2"></i>Add Service</button>
                         </div>
                         <div class="table-container">
                             <table id="servicesTable">
                                 <thead>
-                                    <tr><th>ID</th><th>Service Title</th><th>Category</th><th>Gender</th><th>Price</th><th>Duration</th><th>Status</th><th>Actions</th></tr>
+                                <tr><th>ID</th><th>Service Title</th><th>Category</th><th>Gender</th><th>Price</th><th>Duration</th><th>Status</th><th>Actions</th></tr>
                                 </thead>
                                 <tbody id = "serviceTableBody">
-                                    <tr>
-                                        <td>1</td><td>Hair Cut Package</td><td>Packages</td><td>Male</td><td>Rs. 1500</td><td>60 mins</td>
-                                        <td><span class="status status-completed">Available</span></td>
-                                        <td>
-                                            <button class="action-btn btn-view" data-bs-toggle="modal" data-bs-target="#serivceQuickViewModal"><i class="fas fa-eye"></i></button>
-                                            <button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#serviceEditModal"><i class="fas fa-edit"></i></button>
-                                            <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td><td>Bridal Package</td><td>Packages</td><td>Female</td><td>Rs. 10000</td><td>180 mins</td>
-                                        <td><span class="status status-completed">Available</span></td>
-                                        <td>
-                                            <button class="action-btn btn-view" data-bs-toggle="modal" data-bs-target="#serivceQuickViewModal"><i class="fas fa-eye"></i></button>
-                                            <button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#serviceEditModal"><i class="fas fa-edit"></i></button>
-                                            <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
-                                        </td>
-                                    </tr>
+                                <tr>
+                                    <td>1</td><td>Hair Cut Package</td><td>Packages</td><td>Male</td><td>Rs. 1500</td><td>60 mins</td>
+                                    <td><span class="status status-completed">Available</span></td>
+                                    <td>
+                                        <button class="action-btn btn-view" data-bs-toggle="modal" data-bs-target="#serivceQuickViewModal"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#serviceEditModal"><i class="fas fa-edit"></i></button>
+                                        <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td><td>Bridal Package</td><td>Packages</td><td>Female</td><td>Rs. 10000</td><td>180 mins</td>
+                                    <td><span class="status status-completed">Available</span></td>
+                                    <td>
+                                        <button class="action-btn btn-view" data-bs-toggle="modal" data-bs-target="#serivceQuickViewModal"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#serviceEditModal"><i class="fas fa-edit"></i></button>
+                                        <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -1100,8 +1104,8 @@
                             <div class="col-md-6">
                                 <h3>Add New Category</h3>
                                 <form>
-                                    <div class="form-group"><label class="form-label">Category Name</label><input type="text" class="form-control" placeholder="Enter category name"></div>
-                                    <button class="btn-primary">Add Category</button>
+                                    <div class="form-group"><label class="form-label">Category Name</label><input type="text" id="newCategoryName" class="form-control" placeholder="Enter category name"></div>
+                                    <button type="button" class="btn-primary" onclick="addCategory();">Add Category</button>
                                 </form>
                             </div>
                             <div class="col-md-6">
@@ -1109,10 +1113,10 @@
                                 <div class="table-container">
                                     <table>
                                         <thead><tr><th>ID</th><th>Category</th><th>Actions</th></tr></thead>
-                                        <tbody>
-                                            <tr><td>1</td><td>Hair</td><td><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
-                                            <tr><td>2</td><td>Makeup</td><td><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
-                                            <tr><td>3</td><td>Packages</td><td><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
+                                        <tbody id="categoryTableBody">
+                                        <tr><td>1</td><td>Hair</td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#serviceEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
+                                        <tr><td>2</td><td>Makeup</td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#serviceEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
+                                        <tr><td>3</td><td>Packages</td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#serviceEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -1129,11 +1133,11 @@
                                     <div class="selection-table-container">
                                         <table class="selection-table" id="serviceSelectionTable">
                                             <thead><tr><th>ID</th><th>Service Name</th><th>Category</th></tr></thead>
-                                            <tbody>
-                                                <tr data-id="1"><td>1</td><td>Hair Cut Package</td><td>Packages</td></tr>
-                                                <tr data-id="2"><td>2</td><td>Bridal Package</td><td>Packages</td></tr>
-                                                <tr data-id="3"><td>3</td><td>Hair Tinting</td><td>Hair</td></tr>
-                                                <tr data-id="4"><td>4</td><td>Eye Makeup</td><td>Makeup</td></tr>
+                                            <tbody id="serviceSearchForStylist">
+                                            <tr data-id="1"><td>1</td><td>Hair Cut Package</td><td>Packages</td></tr>
+                                            <tr data-id="2"><td>2</td><td>Bridal Package</td><td>Packages</td></tr>
+                                            <tr data-id="3"><td>3</td><td>Hair Tinting</td><td>Hair</td></tr>
+                                            <tr data-id="4"><td>4</td><td>Eye Makeup</td><td>Makeup</td></tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -1153,9 +1157,9 @@
                                 <div class="table-container">
                                     <table>
                                         <thead><tr><th>Service</th><th>Stylist</th></tr></thead>
-                                        <tbody>
-                                            <tr><td>Hair Cut Package</td><td>Kamal Silva</td></tr>
-                                            <tr><td>Bridal Package</td><td>Saman Fernando</td></tr>
+                                        <tbody id="assignedServiceStyliststable">
+                                        <tr><td>Hair Cut Package</td><td>Kamal Silva</td></tr>
+                                        <tr><td>Bridal Package</td><td>Saman Fernando</td></tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -1169,20 +1173,28 @@
         <!-- User Management -->
         <div class="content-page" id="user-management-page">
             <div class="content-section">
-                <div class="section-header">
-                    <h2 class="section-title">User Management</h2>
-                    <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="fas fa-plus me-2"></i>Add New User</button>
-                </div>
-                <div class="table-container">
-                    <table>
-                        <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Mobile</th><th>Gender</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
-                        <tbody>
-                            <tr><td>1</td><td>Nimal Perera</td><td>nimal@gmail.com</td><td>0711111111</td><td>Male</td><td>Customer</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
-                            <tr><td>2</td><td>Kamal Silva</td><td>kamal@gmail.com</td><td>0722222222</td><td>Male</td><td>Stylist</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
-                            <tr><td>3</td><td>Saman Fernando</td><td>saman@gmail.com</td><td>0733333333</td><td>Male</td><td>Stylist</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
-                            <tr><td>4</td><td>Anu Perera</td><td>anu@gmail.com</td><td>0744444444</td><td>Female</td><td>Customer</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
-                        </tbody>
-                    </table>
+                <ul class="nav nav-tabs admin-tabs" id="userManagementTabs" role="tablist">
+                    <li class="nav-item"><button class="nav-link active" data-tab-target="user-list" type="button" role="tab">All Users</button></li>
+                </ul>
+                <div class="tab-content" id="userManagementTabContent">
+                    <div class="tab-pane active" id="user-list" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
+                            <h2 class="section-title">All Users</h2>
+                            <div class="search-box mb-3"><input type="text" placeholder="Search User by Mobile or Email..." id="userTableSearch"><i class="fas fa-search"></i></div>
+                            <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="fas fa-plus me-2"></i>Add New User</button>
+                        </div>
+                        <div class="table-container">
+                            <table>
+                                <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Mobile</th><th>Gender</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+                                <tbody id="allUsersTable">
+                                <tr><td>1</td><td>Nimal Perera</td><td>nimal@gmail.com</td><td>0711111111</td><td>Male</td><td>Customer</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
+                                <tr><td>2</td><td>Kamal Silva</td><td>kamal@gmail.com</td><td>0722222222</td><td>Male</td><td>Stylist</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
+                                <tr><td>3</td><td>Saman Fernando</td><td>saman@gmail.com</td><td>0733333333</td><td>Male</td><td>Stylist</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
+                                <tr><td>4</td><td>Anu Perera</td><td>anu@gmail.com</td><td>0744444444</td><td>Female</td><td>Customer</td><td><span class="status status-completed">Active</span></td><td><button class="action-btn btn-edit" data-bs-toggle="modal" data-bs-target="#userEditModal"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete"><i class="fas fa-trash"></i></button></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1277,6 +1289,37 @@
                 </div>
             </div>
         </div>
+
+        <!-- Settings_Management -->
+        <div class="content-page" id="settings-page">
+            <div class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Settings</h2>
+                </div>
+                <ul class="nav nav-tabs admin-tabs" id="settingsManagementTabs" role="tablist">
+                    <li class="nav-item"><button class="nav-link" data-tab-target="carousel-images" type="button" role="tab">Carousel Images</button></li>
+                </ul>
+                <div class="tab-content" id="settingsManagementTabContent">
+
+                    <div class="tab-pane active" id="carousel-images" role="tabpanel">
+                        <div class="row mt-4">
+                            <div class="col-md-5">
+                                <h3>Manage Carousel Images</h3>
+                                <div class="form-group mt-3">
+                                    <label class="form-label">Select Images</label>
+
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <h3>Images</h3>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- ==================== ALL MODALS ==================== -->
@@ -1294,34 +1337,32 @@
                 <div class="modal-body">
                     <div class="detail-grid">
                         <div class="detail-image-section">
-                            <div class="detail-image-main">
+                            <div class="detail-image-main" id="viewServiceImageMain">
                                 <i class="fas fa-spa"></i>
                             </div>
-                            <div class="detail-thumbnails">
-                                <div class="detail-thumb active"><i class="fas fa-cut"></i></div>
-                                <div class="detail-thumb"><i class="fas fa-paint-brush"></i></div>
-                                <div class="detail-thumb"><i class="fas fa-magic"></i></div>
+                            <div class="detail-thumbnails" id="viewServiceThumbnails">
+                                <!-- Thumbnails will be loaded here -->
                             </div>
                         </div>
                         <div class="detail-info">
-                            <span class="detail-badge available">Available</span>
-                            <h4 class="mb-0" style="font-weight:700;color:var(--dark-text);">Hair Cut Package</h4>
-                            <p class="text-muted mb-0" style="font-size:0.85rem;color:var(--text-muted);">Category: <strong>Packages</strong> &nbsp;|&nbsp; For: <strong>Male</strong></p>
-                            <div class="detail-price">Rs. 1,500.00</div>
-                            <p class="detail-description">Hair cut + wash + styling — a complete grooming experience tailored to your style. Includes a relaxing scalp massage and premium product application for a fresh, lasting look.</p>
+                            <span class="detail-badge" id="viewServiceBadge">Available</span>
+                            <h4 class="mb-0" id="viewServiceTitle" style="font-weight:700;color:var(--dark-text);">Hair Cut Package</h4>
+                            <p class="text-muted mb-0" style="font-size:0.85rem;color:var(--text-muted);">Category: <strong id="viewServiceCategoryHeader">Packages</strong> &nbsp;|&nbsp; For: <strong id="viewServiceGenderHeader">Male</strong></p>
+                            <div class="detail-price" id="viewServicePrice">Rs. 1,500.00</div>
+                            <p class="detail-description" id="viewServiceDescription">Hair cut + wash + styling — a complete grooming experience tailored to your style.</p>
                             <ul class="detail-specs">
-                                <li><i class="fas fa-clock"></i><strong>Duration</strong> 60 minutes</li>
-                                <li><i class="fas fa-tag"></i><strong>Category</strong> Packages</li>
-                                <li><i class="fas fa-venus-mars"></i><strong>Gender</strong> Male</li>
-                                <li><i class="fas fa-calendar-alt"></i><strong>Created</strong> Apr 28, 2026</li>
-                                <li><i class="fas fa-check-circle"></i><strong>Status</strong> Available</li>
+                                <li><i class="fas fa-clock"></i><strong>Duration</strong> <span id="viewServiceDuration">60</span> minutes</li>
+                                <li><i class="fas fa-tag"></i><strong>Category</strong> <span id="viewServiceCategory">Packages</span></li>
+                                <li><i class="fas fa-venus-mars"></i><strong>Gender</strong> <span id="viewServiceGender">Male</span></li>
+                                <li><i class="fas fa-calendar-alt"></i><strong>Created</strong> <span id="viewServiceCreated">Apr 28, 2026</span></li>
+                                <li><i class="fas fa-check-circle"></i><strong>Status</strong> <span id="viewServiceStatus">Available</span></li>
                             </ul>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Close</button>
-                    <button type="button" class="btn-primary" data-bs-toggle="modal" data-bs-target="#serviceEditModal" data-bs-dismiss="modal"><i class="fas fa-edit me-1"></i>Edit Service</button>
+                    <button type="button" class="btn-primary" id="btnEditFromQuickView" data-bs-toggle="modal" data-bs-target="#serviceEditModal" data-bs-dismiss="modal"><i class="fas fa-edit me-1"></i>Edit Service</button>
                 </div>
             </div>
         </div>
@@ -1413,7 +1454,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
-                    <button type="button" class="btn-primary"><i class="fas fa-save me-1"></i>Save User</button>
+                    <button type="button" class="btn-primary" id="btnSaveUser" onclick="saveUser()"><i class="fas fa-save me-1"></i>Save User</button>
                 </div>
             </div>
         </div>
@@ -1510,20 +1551,32 @@
                                 <div class="form-group"><label class="form-label">Duration (Minutes) <span style="color:#dc3545;">*</span></label><input type="number" class="form-control" id="addServiceDuration" placeholder="e.g. 60" min="5" max="480" required></div>
                             </div>
                             <div class="col-md-4">
-                                <div class="form-group"><label class="form-label">Category <span style="color:#dc3545;">*</span></label><select class="form-select" id="addServiceCategory" required><option value="">-- Select --</option><option value="1">Hair</option><option value="2">Makeup</option><option value="3">Packages</option></select></div>
+                                <div class="form-group"><label class="form-label">Category <span style="color:#dc3545;">*</span></label><select class="form-select" id="addServiceCategory" required><option value="">-- Select --</option></select></div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group"><label class="form-label">Target Gender <span style="color:#dc3545;">*</span></label><select class="form-select" id="addServiceGender" required><option value="">-- Select --</option><option value="1">Male</option><option value="2">Female</option></select></div>
+                                <div class="form-group"><label class="form-label">Target Gender <span style="color:#dc3545;">*</span></label><select class="form-select" id="addServiceGender" required><option value="">-- Select --</option></select></div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group"><label class="form-label">Status <span style="color:#dc3545;">*</span></label><select class="form-select" id="addServiceStatus" required><option value="1">Available</option><option value="2">Unavailable</option></select></div>
+                                <div class="form-group"><label class="form-label">Status <span style="color:#dc3545;">*</span></label><select class="form-select" id="addServiceStatus" required><option value="">-- Select --</option></select></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Product Image1*</label>
+                                <input type="file" class="form-control" id="addServiceImage1" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Product Image2(optional)</label>
+                                <input type="file" class="form-control" id="addServiceImage2">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Product Image3(optional)</label>
+                                <input type="file" class="form-control" id="addServiceImage3">
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
-                    <button type="button" class="btn-primary"><i class="fas fa-save me-1"></i>Save Service</button>
+                    <button type="button" class="btn-primary" onclick="saveService()"><i class="fas fa-save me-1"></i>Save Service</button>
                 </div>
             </div>
         </div>
@@ -1596,32 +1649,44 @@
                         <input type="hidden" id="editServiceId" value="1">
                         <div class="row g-3">
                             <div class="col-12">
-                                <div class="form-group"><label class="form-label">Service Title <span style="color:#dc3545;">*</span></label><input type="text" class="form-control" id="editServiceTitle" value="Hair Cut Package" required></div>
+                                <div class="form-group"><label class="form-label">Service Title <span style="color:#dc3545;">*</span></label><input type="text" class="form-control" id="editServiceTitle" value="Hair Cut Package" minlength="2" maxlength="200" required></div>
                             </div>
                             <div class="col-12">
-                                <div class="form-group"><label class="form-label">Description <span style="color:#dc3545;">*</span></label><textarea class="form-control" id="editServiceDescription" rows="3" required>Hair cut + wash + styling</textarea></div>
+                                <div class="form-group"><label class="form-label">Description <span style="color:#dc3545;">*</span></label><textarea class="form-control" id="editServiceDescription" rows="3" minlength="10" required>Hair cut + wash + styling</textarea></div>
                             </div>
                             <div class="col-md-4">
-                                <div class="form-group"><label class="form-label">Price (Rs.) <span style="color:#dc3545;">*</span></label><input type="number" class="form-control" id="editServicePrice" value="1500" min="0" step="0.01" required></div>
+                                <div class="form-group"><label class="form-label">Price (Rs.) <span style="color:#dc3545;">*</span></label><input type="number" class="form-control" id="editServicePrice" value="1500" min="0.01" step="0.01" required></div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group"><label class="form-label">Duration (Minutes) <span style="color:#dc3545;">*</span></label><input type="number" class="form-control" id="editServiceDuration" value="60" min="5" max="480" required></div>
                             </div>
                             <div class="col-md-4">
-                                <div class="form-group"><label class="form-label">Category <span style="color:#dc3545;">*</span></label><select class="form-select" id="editServiceCategory" required><option value="1">Hair</option><option value="2">Makeup</option><option value="3" selected>Packages</option></select></div>
+                                <div class="form-group"><label class="form-label">Category <span style="color:#dc3545;">*</span></label><select class="form-select" id="editServiceCategory" required><option value="">-- Select --</option></select></div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group"><label class="form-label">Target Gender <span style="color:#dc3545;">*</span></label><select class="form-select" id="editServiceGender" required><option value="1" selected>Male</option><option value="2">Female</option></select></div>
+                                <div class="form-group"><label class="form-label">Target Gender <span style="color:#dc3545;">*</span></label><select class="form-select" id="editServiceGender" required><option value="">-- Select --</option></select></div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group"><label class="form-label">Status <span style="color:#dc3545;">*</span></label><select class="form-select" id="editServiceStatus" required><option value="1" selected>Available</option><option value="2">Unavailable</option></select></div>
+                                <div class="form-group"><label class="form-label">Status <span style="color:#dc3545;">*</span></label><select class="form-select" id="editServiceStatus" required><option value="">-- Select --</option></select></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Product Image1(optional)</label>
+                                <input type="file" class="form-control" id="editServiceImage1">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Product Image2(optional)</label>
+                                <input type="file" class="form-control" id="editServiceImage2">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Product Image3(optional)</label>
+                                <input type="file" class="form-control" id="editServiceImage3">
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
-                    <button type="button" class="btn-primary"><i class="fas fa-check me-1"></i>Update Service</button>
+                    <button type="button" class="btn-primary" onclick="updateService()"><i class="fas fa-check me-1"></i>Update Service</button>
                 </div>
             </div>
         </div>
@@ -1668,7 +1733,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
-                    <button type="button" class="btn-primary"><i class="fas fa-check me-1"></i>Update User</button>
+                    <button type="button" class="btn-primary" id="btnUpdateUser" onclick="updateUser()"><i class="fas fa-check me-1"></i>Update User</button>
                 </div>
             </div>
         </div>
@@ -1707,6 +1772,36 @@
                 <div class="modal-footer">
                     <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
                     <button type="button" class="btn-primary" id="updateStylistBtn" onclick="updateStylist()"><i class="fas fa-check me-1"></i>Update Stylist</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Category Modal -->
+    <div class="modal fade" id="categoryEditModal" tabindex="-1" aria-labelledby="categoryEditLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="categoryEditLabel"><i class="fas fa-edit me-2"></i>Edit Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="editCategoryForm">
+                        <input type="hidden" id="editCategoryId" value="1">
+                        <div class="alert alert-info mb-3" style="background:var(--bg-body);border:1px solid var(--border-color);color:var(--dark-text);">
+                            <i class="fas fa-info-circle me-1"></i> Editing Category Name for <b><span id="catNameE"></span></b> (Category ID: <b><span id="catId"></span></b>)
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-group"><label class="form-label">Enter New Category Name</label><input type="text" class="form-control" id="editCategoryName1"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
+                    <button type="button" class="btn-primary" onclick="editCategory();"><i class="fas fa-check me-1"></i>Update Category</button>
                 </div>
             </div>
         </div>
@@ -1770,6 +1865,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!--link your js file-->
     <script src="js/ServiceJS/serviceManagement.js"></script>
+    <script src="js/UserJS/userManagement.js"></script>
 
     <script src="js/AppointmentJS/appointmentManagement.js"></script>
     <script src="js/StylistJS/stylistProfiles.js?v=4"></script>
@@ -1833,6 +1929,7 @@
         }
         initTabs('#serviceManagementTabs', '#serviceManagementTabContent');
         initTabs('#stylistManagementTabs', '#stylistManagementTabContent');
+        initTabs('#settingsManagementTabs', '#settingsManagementTabContent');
 
 
 

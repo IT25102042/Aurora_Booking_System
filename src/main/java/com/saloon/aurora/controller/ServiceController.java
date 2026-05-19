@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -96,9 +97,41 @@ public class ServiceController {
             return ResponseEntity.badRequest().body("Failed to delete service: " + e.getMessage());
         }
     }
+
     @GetMapping("/stylist/{stylistId}")
     public ResponseEntity<List<ServiceDto>> getServicesByStylist(@PathVariable Integer stylistId) {
         List<ServiceDto> services = serviceService.getServicesByStylistProfileId(stylistId);
         return ResponseEntity.ok(services);
     }
+
+    @PostMapping("/assign-stylist")
+    public ResponseEntity<?> assignStylistToService(
+            @RequestParam Integer serviceId,
+            @RequestParam Integer stylistProfileId) {
+        try {
+            serviceService.assignStylistToService(serviceId, stylistProfileId);
+            return ResponseEntity.ok("Stylist assigned to service successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/unassign-stylist")
+    public ResponseEntity<?> unassignStylistFromService(
+            @RequestParam Integer serviceId,
+            @RequestParam Integer stylistProfileId) {
+        try {
+            serviceService.unassignStylistFromService(serviceId, stylistProfileId);
+            return ResponseEntity.ok("Stylist unassigned from service successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/service-stylist-assignments")
+    public ResponseEntity<List<Map<String, Object>>> getAllServiceStylistAssignments() {
+        List<Map<String, Object>> assignments = serviceService.getAllServiceStylistAssignments();
+        return ResponseEntity.ok(assignments);
+    }
 }
+

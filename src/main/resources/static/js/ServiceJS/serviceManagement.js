@@ -622,3 +622,227 @@ function deleteService(id) {
     }
 }
 
+// ==========================================
+// SERVICE STYLISTS TAB - FUNCTIONALITY
+// ==========================================
+
+let selectedServiceId = null;
+
+// Auto-load on page start
+loadServicesForStylistTab();
+loadStylistDropdown();
+loadAssignedServiceStylists();
+
+// --- Load services into the selection table ---
+function loadServicesForStylistTab() {
+    fetch('http://localhost:8080/api/service/all')
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch services');
+            return response.json();
+        })
+        .then(data => {
+            const tbody = document.getElementById('serviceSearchForStylist');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:20px;color:var(--text-muted);">No services found</td></tr>';
+                return;
+            }
+
+            data.forEach(service => {
+                const tr = document.createElement('tr');
+                tr.setAttribute('data-id', service.id);
+                tr.innerHTML = `
+                    <td>${service.id}</td>
+                    <td>${service.title}</td>
+                    <td>${service.categoryName || '-'}</td>
+                `;
+                // Row click handler for selection
+                tr.addEventListener('click', function() {
+                    // Remove selection from all rows
+                    tbody.querySelectorAll('tr').forEach(row => row.classList.remove('selected-row'));
+                    // Select this row
+                    this.classList.add('selected-row');
+                    selectedServiceId = service.id;
+                    checkAssignBtnState();
+                });
+                tbody.appendChild(tr);
+            });
+        })
+        .catch(error => {
+            console.error('Error loading services for stylist tab:', error);
+            const tbody = document.getElementById('serviceSearchForStylist');
+            if (tbody) {
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:20px;color:var(--text-muted);">Failed to load services</td></tr>';
+            }
+        });
+}
+
+// --- Search/filter services in the selection table ---
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('serviceTableSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+            const tbody = document.getElementById('serviceSearchForStylist');
+            if (!tbody) return;
+
+            const rows = tbody.querySelectorAll('tr[data-id]');
+            rows.forEach(row => {
+                const id = row.querySelector('td:first-child').textContent.toLowerCase();
+                const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                if (id.includes(query) || name.includes(query)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    }
+});
+
+// --- Load stylists into the dropdown ---
+function loadStylistDropdown() {
+    fetch('http://localhost:8080/api/stylist-profiles')
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch stylists');
+            return response.json();
+        })
+        .then(data => {
+            const select = document.getElementById('stylistDropdown');
+            if (!select) return;
+            select.innerHTML = '<option value="">-- Choose Stylist --</option>';
+
+            data.forEach(stylist => {
+                const fullName = `${stylist.firstName} ${stylist.lastName}`;
+                const roleName = stylist.stylistRoleName || '';
+                const option = document.createElement('option');
+                option.value = stylist.id;
+                option.textContent = `${fullName} (${roleName})`;
+                select.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error loading stylists dropdown:', error);
+        });
+}
+
+// --- Stylist dropdown change -> check button state ---
+document.addEventListener('DOMContentLoaded', function() {
+    const dropdown = document.getElementById('stylistDropdown');
+    if (dropdown) {
+        dropdown.addEventListener('change', function() {
+            checkAssignBtnState();
+        });
+    }
+});
+
+// --- Enable/disable assign button ---
+function checkAssignBtnState() {
+    const btn = document.getElementById('assignStylistBtn');
+    if (!btn) return;
+    const stylistVal = document.getElementById('stylistDropdown')?.value;
+    btn.disabled = !(selectedServiceId && stylistVal);
+}
+
+// --- Assign Stylist Button Handler ---
+document.addEventListener('DOMContentLoaded', function() {
+    const assignBtn = document.getElementById('assignStylistBtn');
+    if (assignBtn) {
+        assignBtn.addEventListener('click', function() {
+            const stylistProfileId = document.getElementById('stylistDropdown')?.value;
+            if (!selectedServiceId || !stylistProfileId) {
+                alert('Please select both a service and a stylist.');
+                return;
+            }
+
+            fetch(`http://localhost:8080/api/service/assign-stylist?serviceId=${selectedServiceId}&stylistProfileId=${stylistProfileId}`, {
+                method: 'POST'
+            })
+            .then(async response => {
+                const message = await response.text();
+                if (response.ok) {
+                    alert('Success: ' + message);
+                    // Reset selections
+                    selectedServiceId = null;
+                    const tbody = document.getElementById('serviceSearchForStylist');
+                    if (tbody) tbody.querySelectorAll('tr').forEach(row => row.classList.remove('selected-row'));
+                    document.getElementById('stylistDropdown').value = '';
+                    checkAssignBtnState();
+                    // Refresh assigned table
+                    loadAssignedServiceStylists();
+                } else {
+                    throw new Error(message || 'Failed to assign stylist');
+                }
+            })
+            .catch(error => {
+                console.error('Error assigning stylist:', error);
+                alert('Error: ' + error.message);
+            });
+        });
+    }
+});
+
+// --- Load assigned service-stylist pairs ---
+function loadAssignedServiceStylists() {
+    fetch('http://localhost:8080/api/service/service-stylist-assignments')
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch assignments');
+            return response.json();
+        })
+        .then(data => {
+            const tbody = document.getElementById('assignedServiceStyliststable');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text-muted);">No stylist assignments found</td></tr>';
+                return;
+            }
+
+            data.forEach(assignment => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${assignment.serviceTitle}</td>
+                    <td>${assignment.stylistName}</td>
+                    <td>${assignment.stylistRole || '-'}</td>
+                    <td>
+                        <button class="action-btn btn-delete" onclick="unassignStylist(${assignment.serviceId}, ${assignment.stylistProfileId})">
+                            <i class="fas fa-unlink"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        })
+        .catch(error => {
+            console.error('Error loading assignments:', error);
+            const tbody = document.getElementById('assignedServiceStyliststable');
+            if (tbody) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text-muted);">Failed to load assignments</td></tr>';
+            }
+        });
+}
+
+// --- Unassign stylist from service ---
+function unassignStylist(serviceId, stylistProfileId) {
+    if (confirm('Are you sure you want to unassign this stylist from this service?')) {
+        fetch(`http://localhost:8080/api/service/unassign-stylist?serviceId=${serviceId}&stylistProfileId=${stylistProfileId}`, {
+            method: 'DELETE'
+        })
+        .then(async response => {
+            const message = await response.text();
+            if (response.ok) {
+                alert('Success: ' + message);
+                loadAssignedServiceStylists();
+            } else {
+                throw new Error(message || 'Failed to unassign stylist');
+            }
+        })
+        .catch(error => {
+            console.error('Error unassigning stylist:', error);
+            alert('Error: ' + error.message);
+        });
+    }
+}

@@ -96,4 +96,9 @@ public class ServiceController {
             return ResponseEntity.badRequest().body("Failed to delete service: " + e.getMessage());
         }
     }
+    @GetMapping("/stylist/{stylistId}")
+    public ResponseEntity<List<ServiceDto>> getServicesByStylist(@PathVariable Integer stylistId) {
+        List<ServiceDto> services = serviceService.getServicesByStylistProfileId(stylistId);
+        return ResponseEntity.ok(services);
+    }
 }

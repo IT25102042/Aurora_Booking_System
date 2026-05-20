@@ -156,8 +156,17 @@ async function signOut() {
 // Load Booking History
 async function loadBookingHistory(userId) {
     try {
-        const response = await fetch('http://localhost:8080/api/appointments/user/${userId}', { credentials: 'include' });
+        const response = await fetch(`http://localhost:8080/api/appointments/user/${userId}`, { credentials: 'include' });
         const appointments = await response.json();
+
+        // Ensure appointments is an array
+        if (!Array.isArray(appointments)) {
+            console.error("Error: Appointments data is not an array.", appointments);
+            return;
+        }
+
+        // Sort appointments by date (most recent first)
+        appointments.sort((a, b) => new Date(b.appointmentDate) - new Date(a.appointmentDate));
 
         // Get the booking items container
         const bookingsTab = document.getElementById("bookings");
@@ -175,9 +184,6 @@ async function loadBookingHistory(userId) {
             bookingsContainer.appendChild(noAppointmentsMsg);
             return;
         }
-
-        // Sort appointments by date (most recent first)
-        appointments.sort((a, b) => new Date(b.appointmentDate) - new Date(a.appointmentDate));
 
         // Create booking items for each appointment
         appointments.forEach(appointment => {

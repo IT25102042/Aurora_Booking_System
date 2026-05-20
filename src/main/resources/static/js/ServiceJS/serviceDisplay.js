@@ -149,6 +149,31 @@ function renderSingleService(service) {
             thumbContainer.appendChild(thumb);
         }
     }
+
+    // Update Stylists
+    const stylistContainer = document.querySelector('.stylist-options');
+    if (stylistContainer) {
+        const optionGroup = stylistContainer.closest('.option-group');
+        stylistContainer.innerHTML = '';
+        
+        if (service.stylists && service.stylists.length > 0) {
+            if (optionGroup) optionGroup.style.display = 'block';
+            service.stylists.forEach(stylist => {
+                const opt = document.createElement('div');
+                opt.className = 'stylist-option';
+                
+                if (stylist.status && stylist.status.toLowerCase() === 'available') {
+                    opt.classList.add('active');
+                }
+                
+                opt.innerHTML = `<img src="user_images/${stylist.userId}/image1.png" onerror="this.src='https://ui-avatars.com/api/?name=${stylist.firstName}+${stylist.lastName}&background=random'" alt="stylist"> ${stylist.firstName}`;
+                
+                stylistContainer.appendChild(opt);
+            });
+        } else {
+            if (optionGroup) optionGroup.style.display = 'none';
+        }
+    }
 }
 
 function loadRelatedServices(id) {

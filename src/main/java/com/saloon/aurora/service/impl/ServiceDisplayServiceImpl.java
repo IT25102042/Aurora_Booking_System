@@ -186,6 +186,22 @@ public class ServiceDisplayServiceImpl implements ServiceDisplayService {
             dto.setServiceStatusId(entity.getServiceStatus().getId());
             dto.setServiceStatusName(entity.getServiceStatus().getServiceStatus());
         }
+
+        if (entity.getStylistProfiles() != null && !entity.getStylistProfiles().isEmpty()) {
+            List<Map<String, Object>> stylists = new ArrayList<>();
+            for (com.saloon.aurora.entity.StylistProfileEntity stylist : entity.getStylistProfiles()) {
+                Map<String, Object> stylistMap = new LinkedHashMap<>();
+                stylistMap.put("id", stylist.getId());
+                stylistMap.put("userId", stylist.getUser().getId());
+                stylistMap.put("firstName", stylist.getUser().getFirstName());
+                stylistMap.put("lastName", stylist.getUser().getLastName());
+                stylistMap.put("role", stylist.getStylistRole().getStylistRole());
+                stylistMap.put("status", stylist.getStylistStatus().getStylistStatus());
+                stylists.add(stylistMap);
+            }
+            dto.setStylists(stylists);
+        }
+
         return dto;
     }
 

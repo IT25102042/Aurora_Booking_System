@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -50,4 +52,6 @@ public class ServiceDto {
     private String serviceStatusName;
 
     private Date createdAt;
+
+    private List<Map<String, Object>> stylists;
 }

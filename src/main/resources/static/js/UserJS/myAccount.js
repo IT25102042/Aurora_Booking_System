@@ -41,6 +41,9 @@ async function getUserData() {
                 this.src = 'https://www.w3schools.com/howto/img_avatar.png'; // Fallback avatar
             };
 
+            // Load booking history for the user
+            loadBookingHistory(user.id);
+
         } else {
             // Not logged in
             window.location.href = "signIn.html";

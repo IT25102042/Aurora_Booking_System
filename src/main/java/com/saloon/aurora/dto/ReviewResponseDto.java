@@ -12,11 +12,13 @@ import java.util.Date;
 public class ReviewResponseDto {
 
     private Integer id;
-    private String reviewerName;   // built from user.firstName + user.lastName in service layer
-    private String serviceName;    // from appointment.service.title
+    private Integer appointmentId;
+    private String reviewerName;
+    private String serviceName;
     private Integer rating;
     private String reviewText;
-    private Boolean hasPhoto;      // true if review_images
+    private Boolean hasPhoto;
     private Date createdAt;
+    private Boolean isUpdated;
 
 }

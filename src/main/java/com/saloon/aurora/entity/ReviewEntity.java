@@ -34,4 +34,7 @@ public class ReviewEntity {
 
     @Column(name = "created_at", nullable = false)
     private Date createdAt;
+
+    @Column(name = "is_updated", nullable = false)
+    private Boolean Updated = false;
 }

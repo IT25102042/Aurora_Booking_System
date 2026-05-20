@@ -149,3 +149,101 @@ async function signOut() {
         console.error("Error signing out:", error);
     }
 }
+
+// Load Booking History
+async function loadBookingHistory(userId) {
+    try {
+        const response = await fetch('http://localhost:8080/api/appointments/user/${userId}', { credentials: 'include' });
+        const appointments = await response.json();
+
+        // Get the booking items container
+        const bookingsTab = document.getElementById("bookings");
+        const bookingsContainer = bookingsTab.querySelector('.account-card');
+
+        // Clear existing hardcoded booking items
+        const existingItems = bookingsContainer.querySelectorAll('.booking-item');
+        existingItems.forEach(item => item.remove());
+
+        // If no appointments, show a message
+        if (!appointments || appointments.length === 0) {
+            const noAppointmentsMsg = document.createElement('div');
+            noAppointmentsMsg.className = 'no-appointments-message';
+            noAppointmentsMsg.innerHTML = '<p>No appointments yet. <a href="booking.html">Book an appointment</a></p>';
+            bookingsContainer.appendChild(noAppointmentsMsg);
+            return;
+        }
+
+        // Sort appointments by date (most recent first)
+        appointments.sort((a, b) => new Date(b.appointmentDate) - new Date(a.appointmentDate));
+
+        // Create booking items for each appointment
+        appointments.forEach(appointment => {
+            const bookingItem = createBookingItem(appointment);
+            bookingsContainer.appendChild(bookingItem);
+        });
+
+    } catch (error) {
+        console.error("Error loading booking history:", error);
+    }
+}
+
+// Create a booking item element
+function createBookingItem(appointment) {
+    const bookingItem = document.createElement('div');
+    bookingItem.className = 'booking-item';
+
+    // Format date and time
+    const appointmentDate = new Date(appointment.appointmentDate);
+    const dateStr = appointmentDate.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+    const timeStr = appointment.startTime || 'TBD';
+
+    // Get status badge class
+    const statusClass = getStatusClass(appointment.appointmentStatus);
+
+    // Only show Review button for completed appointments
+    const isCompleted = appointment.appointmentStatus && appointment.appointmentStatus.toLowerCase() === 'completed';
+    const reviewButton = isCompleted
+        ? `<button class="btn-add-review" onclick="openReviewModal('${appointment.id}', '${appointment.serviceName}')">Add Review</button>`
+        : '';
+
+    bookingItem.innerHTML = `
+        <div>
+            <div class="booking-service">${appointment.serviceName}</div>
+            <div class="booking-date">${dateStr} · ${timeStr}</div>
+        </div>
+        <div class="booking-actions">
+            <span class="booking-status ${statusClass}">${appointment.appointmentStatus}</span>
+            ${reviewButton}
+        </div>
+    `;
+
+    return bookingItem;
+}
+
+// Get CSS class for appointment status
+function getStatusClass(status) {
+    if (!status) return 'status-pending';
+
+    const statusLower = status.toLowerCase();
+
+    if (statusLower === 'completed') {
+        return 'status-completed';
+    } else if (statusLower === 'confirmed') {
+        return 'status-confirmed';
+    } else if (statusLower === 'cancelled') {
+        return 'status-cancelled';
+    } else if (statusLower === 'pending') {
+        return 'status-pending';
+    }
+
+    return 'status-pending';
+}
+
+// Open Review Modal
+function openReviewModal(appointmentId, serviceName) {
+    alert('Review functionality coming soon for appointment ' + appointmentId);
+}

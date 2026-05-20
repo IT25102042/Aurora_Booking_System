@@ -6,10 +6,10 @@ async function getUserData() {
     try {
         const response = await fetch('http://localhost:8080/api/users/check-session', { credentials: 'include' });
         const data = await response.json();
-        
+
         if (data.status && data.user) {
             const user = data.user;
-            
+
             // Update Dropdown
             document.getElementById("welcomeUserText").innerHTML = `Welcome ${user.firstName}`;
             document.getElementById("navSignIn").style.display = "none";
@@ -24,7 +24,7 @@ async function getUserData() {
             document.getElementById("profileName").innerHTML = `${user.firstName} ${user.lastName}`;
             document.getElementById("profileEmail").innerHTML = user.email;
             document.getElementById("profilePhone").innerHTML = user.mobile;
-            
+
             const sinceDate = new Date(user.createdAt);
             document.getElementById("profileMemberSince").innerHTML = sinceDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -144,7 +144,7 @@ async function signOut() {
     try {
         const response = await fetch('http://localhost:8080/api/users/signout', { method: 'POST', credentials: 'include' });
         const data = await response.json();
-        
+
         if (data.status) {
             window.location.href = "home.html";
         }
@@ -156,14 +156,25 @@ async function signOut() {
 // Load Booking History
 async function loadBookingHistory(userId) {
     try {
-        const response = await fetch(`http://localhost:8080/api/appointments/user/${userId}`, { credentials: 'include' });
-        const appointments = await response.json();
+        // Fetch appointments and user's reviews at the same time
+        const [appointmentsRes, reviewsRes] = await Promise.all([
+            fetch(`http://localhost:8080/api/appointments/user/${userId}`, { credentials: 'include' }),
+            fetch(`http://localhost:8080/api/reviews/my?userId=${userId}`, { credentials: 'include' })
+        ]);
+
+        const appointments = await appointmentsRes.json();
+        const reviews = await reviewsRes.json();
 
         // Ensure appointments is an array
         if (!Array.isArray(appointments)) {
             console.error("Error: Appointments data is not an array.", appointments);
             return;
         }
+
+        // Build a Set of appointmentIds that already have a review
+        const reviewedAppointmentIds = new Set(
+            Array.isArray(reviews) ? reviews.map(r => String(r.appointmentId)) : []
+        );
 
         // Sort appointments by date (most recent first)
         appointments.sort((a, b) => new Date(b.appointmentDate) - new Date(a.appointmentDate));
@@ -187,7 +198,8 @@ async function loadBookingHistory(userId) {
 
         // Create booking items for each appointment
         appointments.forEach(appointment => {
-            const bookingItem = createBookingItem(appointment);
+            const alreadyReviewed = reviewedAppointmentIds.has(String(appointment.id));
+            const bookingItem = createBookingItem(appointment, alreadyReviewed);
             bookingsContainer.appendChild(bookingItem);
         });
 
@@ -197,7 +209,7 @@ async function loadBookingHistory(userId) {
 }
 
 // Create a booking item element
-function createBookingItem(appointment) {
+function createBookingItem(appointment, alreadyReviewed = false) {
     const bookingItem = document.createElement('div');
     bookingItem.className = 'booking-item';
 
@@ -215,9 +227,23 @@ function createBookingItem(appointment) {
 
     // Only show Review button for completed appointments
     const isCompleted = appointment.appointmentStatus && appointment.appointmentStatus.toLowerCase() === 'completed';
-    const reviewButton = isCompleted
-        ? `<button class="btn-add-review" onclick="openReviewModal('${appointment.id}', '${appointment.serviceName}')">Add Review</button>`
-        : '';
+
+    let reviewButton = '';
+    if (isCompleted) {
+        if (alreadyReviewed) {
+            reviewButton = `
+                <button class="btn-add-review" disabled
+                    style="opacity:0.5;cursor:not-allowed;">
+                    <i class="bi bi-check-circle-fill"></i> Review Done
+                </button>`;
+        } else {
+            reviewButton = `
+                <button class="btn-add-review"
+                    onclick="openReviewModal('${appointment.id}', '${appointment.serviceName}')">
+                    <i class="bi bi-star"></i> Add Review
+                </button>`;
+        }
+    }
 
     bookingItem.innerHTML = `
         <div>
@@ -254,5 +280,5 @@ function getStatusClass(status) {
 
 // Open Review Modal
 function openReviewModal(appointmentId, serviceName) {
-    alert('Review functionality coming soon for appointment ' + appointmentId);
+    window.location.href = `review.html?appointmentId=${appointmentId}&serviceName=${encodeURIComponent(serviceName)}`;
 }

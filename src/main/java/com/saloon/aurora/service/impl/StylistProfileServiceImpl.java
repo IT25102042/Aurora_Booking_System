@@ -57,7 +57,6 @@ public class StylistProfileServiceImpl {
 
         dto.setExperienceYears(entity.getExperienceYears());
         dto.setBio(entity.getBio());
-
         return dto;
 
     }
@@ -112,4 +111,11 @@ public class StylistProfileServiceImpl {
         return convertToDTO(updatedEntity);
     }
 
+
+    public void deleteStylistProfile(Integer id) {
+        if (!stylistProfileRepository.existsById(id)) {
+            throw new RuntimeException("Stylist Profile not found");
+        }
+        stylistProfileRepository.deleteById(id);
+    }
 }

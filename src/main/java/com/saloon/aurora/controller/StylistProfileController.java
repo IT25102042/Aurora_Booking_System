@@ -35,4 +35,13 @@ public class StylistProfileController {
     public StylistProfileDTO updateStylistProfile(@PathVariable Integer id, @RequestBody StylistProfileDTO dto) {
         return stylistProfileService.updateStylistProfile(id, dto);
     }
+
+
+
+    @DeleteMapping("/{id}")
+    public org.springframework.http.ResponseEntity<Void> deleteStylistProfile(@PathVariable Integer id) {
+        stylistProfileService.deleteStylistProfile(id);
+        return org.springframework.http.ResponseEntity.noContent().build();
+    }
 }
+

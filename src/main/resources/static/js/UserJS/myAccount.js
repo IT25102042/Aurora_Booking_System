@@ -4,17 +4,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 async function getUserData() {
     try {
-        const response = await fetch('http://localhost:8080/api/users/check-session', { credentials: 'include' });
+        const response = await fetch('/api/users/check-session', { credentials: 'include' });
         const data = await response.json();
 
         if (data.status && data.user) {
             const user = data.user;
-
-            // Update Dropdown
-            document.getElementById("welcomeUserText").innerHTML = `Welcome ${user.firstName}`;
-            document.getElementById("navSignIn").style.display = "none";
-            document.getElementById("navSignUp").style.display = "none";
-            document.getElementById("navSignOut").style.display = "block";
 
             // Update Sidebar
             document.getElementById("sidebarName").innerHTML = `${user.firstName} ${user.lastName}`;
@@ -46,7 +40,8 @@ async function getUserData() {
 
         } else {
             // Not logged in
-            window.location.href = "signIn.html";
+            sessionStorage.setItem('postLoginRedirect', 'myAccount.html');
+            window.location.href = "signIn.html?redirect=myAccount.html";
         }
     } catch (error) {
         console.error("Error getting user data:", error);
@@ -140,18 +135,6 @@ async function updatePassword() {
     }
 }
 
-async function signOut() {
-    try {
-        const response = await fetch('http://localhost:8080/api/users/signout', { method: 'POST', credentials: 'include' });
-        const data = await response.json();
-
-        if (data.status) {
-            window.location.href = "home.html";
-        }
-    } catch (error) {
-        console.error("Error signing out:", error);
-    }
-}
 
 // Load Booking History
 async function loadBookingHistory(userId) {

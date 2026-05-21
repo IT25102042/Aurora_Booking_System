@@ -1,36 +1,6 @@
  document.addEventListener("DOMContentLoaded", function () {
-            checkSession();
-            loadStylistCarousel();
-        });
-
-async function checkSession() {
-            try {
-                const response = await fetch('http://localhost:8080/api/users/check-session', { credentials: 'include' });
-                const data = await response.json();
-
-                if (data.status && data.user) {
-                    document.getElementById("welcomeUserText").innerHTML = `Welcome ${data.user.firstName}`;
-                    document.getElementById("navSignIn").style.display = "none";
-                    document.getElementById("navSignUp").style.display = "none";
-                    document.getElementById("navSignOut").style.display = "block";
-                }
-            } catch (error) {
-                console.error("Error checking session:", error);
-            }
-        }
-
-        async function signOut() {
-            try {
-                const response = await fetch('http://localhost:8080/api/users/signout', { method: 'POST', credentials: 'include' });
-                const data = await response.json();
-
-                if (data.status) {
-                    window.location.href = "home.html";
-                }
-            } catch (error) {
-                console.error("Error signing out:", error);
-            }
-        }
+    loadStylistCarousel();
+});
 
 
 // Function to load stylists for the carousel on home page

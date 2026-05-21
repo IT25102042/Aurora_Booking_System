@@ -515,7 +515,7 @@ if (confirmBtn) {
       return;
     }
 
-    const userId = 1; // replace with logged-in user ID
+    const userId = loggedInUserId;
     const stylistId = activeStylist.dataset.id;
     const paymentMethodId = selectedPayment.value;
     const startTime = activeTimeSlot.innerText;
@@ -563,6 +563,7 @@ if (confirmBtn) {
 
       window.alert('Booking created successfully!');
       window.location.reload();
+      window.location.href = "home.html";
     } catch (error) {
       console.error(error);
       showFieldError('formError', 'Failed to create booking. Please try again.');
@@ -573,8 +574,30 @@ if (confirmBtn) {
   });
 }
 
+let loggedInUserId = null;
+
 // Initial load
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Check Session First
+    try {
+        const sessionResp = await fetch('/api/users/check-session', { credentials: 'include' });
+        const sessionData = await sessionResp.json();
+        if (sessionData.status && sessionData.user) {
+            loggedInUserId = sessionData.user.id;
+        } else {
+            // Not logged in, redirect to login page
+            const redirectUrlTarget = `/appointment.html?serviceId=${serviceId}`;
+            sessionStorage.setItem('postLoginRedirect', redirectUrlTarget);
+            const redirectParams = encodeURIComponent(redirectUrlTarget);
+            window.location.href = `signIn.html?redirect=${redirectParams}`;
+            return;
+        }
+    } catch (e) {
+        console.error("Session check failed", e);
+        window.location.href = "signIn.html";
+        return;
+    }
+
   const today = new Date();
   const yyyy = today.getFullYear();
   const mm = String(today.getMonth() + 1).padStart(2, '0');

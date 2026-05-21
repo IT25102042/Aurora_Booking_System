@@ -67,8 +67,10 @@ function initSingleServicePage() {
     const serviceId = urlParams.get('id');
 
     if (serviceId) {
-        loadSingleService(serviceId);
-        loadRelatedServices(serviceId);
+        checkSessionAndWishlist().finally(() => {
+            loadSingleService(serviceId);
+            loadRelatedServices(serviceId);
+        });
     } else {
         window.location.href = 'services.html';
     }
@@ -616,7 +618,6 @@ async function checkSessionAndWishlist() {
 
         if (sessionData.status && sessionData.user) {
             currentUser = sessionData.user;
-            updateNavbar(currentUser);
 
             // Fetch wishlist
             const wishlistResp = await fetch('http://localhost:8080/api/wishlist', { credentials: 'include' });
@@ -630,38 +631,14 @@ async function checkSessionAndWishlist() {
     }
 }
 
-function updateNavbar(user) {
-    const welcomeUserText = document.getElementById("welcomeUserText");
-    const navSignIn = document.getElementById("navSignIn");
-    const navSignUp = document.getElementById("navSignUp");
-    const navSignOut = document.getElementById("navSignOut");
-
-    if (welcomeUserText) welcomeUserText.innerHTML = `Welcome ${user.firstName}`;
-    if (navSignIn) navSignIn.style.display = "none";
-    if (navSignUp) navSignUp.style.display = "none";
-    if (navSignOut) navSignOut.style.display = "block";
-}
-
-async function signOut() {
-    try {
-        const response = await fetch('http://localhost:8080/api/users/signout', { method: 'POST', credentials: 'include' });
-        const data = await response.json();
-
-        if (data.status) {
-            window.location.href = "home.html";
-        }
-    } catch (error) {
-        console.error("Error signing out:", error);
-    }
-}
-
 // ===== Toggle Service Wishlist Status =====
 async function toggleWishlist(event, serviceId) {
     event.stopPropagation();
 
     if (!currentUser) {
         // Not logged in, redirect to login page
-        window.location.href = "signIn.html";
+        sessionStorage.setItem('postLoginRedirect', '/services.html');
+        window.location.href = "signIn.html?redirect=/services.html";
         return;
     }
 
@@ -672,7 +649,7 @@ async function toggleWishlist(event, serviceId) {
     try {
         if (isWished) {
             // Remove from wishlist
-            const response = await fetch(`http://localhost:8080/api/wishlist/remove/${serviceId}`, {
+            const response = await fetch(`/api/wishlist/remove/${serviceId}`, {
                 method: 'DELETE',
                 credentials: 'include'
             });
@@ -689,7 +666,7 @@ async function toggleWishlist(event, serviceId) {
             }
         } else {
             // Add to wishlist
-            const response = await fetch(`http://localhost:8080/api/wishlist/add/${serviceId}`, {
+            const response = await fetch(`/api/wishlist/add/${serviceId}`, {
                 method: 'POST',
                 credentials: 'include'
             });

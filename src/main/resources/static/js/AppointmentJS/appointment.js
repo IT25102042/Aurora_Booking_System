@@ -117,7 +117,12 @@ const API_BASE = "/api";
 // Get serviceId from URL
 const urlParams = new URLSearchParams(window.location.search);
 const serviceId = urlParams.get('serviceId') || 1;
-let currentServicePrice = 89.00;
+let currentServicePrice = 0; // raw price (no conversion)
+let currentServiceDuration = 0;
+
+function formatNumberWithCommas(num) {
+  return Number(num).toLocaleString('en-US', {maximumFractionDigits: 0});
+}
 
 async function loadServiceDetails() {
     console.log("Fetching service details for ID:", serviceId);
@@ -129,15 +134,19 @@ async function loadServiceDetails() {
         console.log("Service data received:", service);
 
         document.getElementById('serviceName').innerText = service.serviceName;
-        document.getElementById('servicePrice').innerText = service.price;
+        // Show the raw numeric price but label it as LKR (no conversion)
+        const usdPrice = Number(service.price) || 0;
+        const displayValue = Math.round(usdPrice);
+        document.getElementById('servicePrice').innerText = formatNumberWithCommas(displayValue);
         document.getElementById('serviceDescription').innerText = service.specialRequests;
         document.getElementById('serviceDuration').innerText = `${service.durationMinutes || 0} min`;
         document.getElementById('summaryitem').innerText = service.serviceName;
-        document.getElementById('summaryitemprice').innerText = `$${service.price}`;
-        document.getElementById('summaryTotal').innerText = `$${service.price}`;
+        document.getElementById('summaryitemprice').innerText = `LKR ${formatNumberWithCommas(displayValue)}`;
+        document.getElementById('summaryTotal').innerText = `LKR ${formatNumberWithCommas(displayValue)}`;
         document.getElementById('summaryDate').innerText = datePicker.value;
 
-        currentServicePrice = service.price;
+        currentServicePrice = displayValue; // keep original numeric value (no conversion)
+        currentServiceDuration = service.durationMinutes || 0;
     } catch (error) {
         console.error('Failed to load service details:', error);
     }
@@ -344,7 +353,7 @@ async function loadAvailableSlots(stylistId, selectedDate) {
     
         try {
             const response = await fetch(
-                `${API_BASE}/appointments/available-slots/${stylistId}/${selectedDate}`
+                `${API_BASE}/appointments/available-slots/${stylistId}/${selectedDate}?serviceId=${serviceId}`
             );
     
             const slots = await response.json();
@@ -397,7 +406,6 @@ async function loadPaymentMethods() {
           name="payment"
           id="payment-${method.id}"
           value="${method.id}"
-          ${index === 0 ? 'checked' : ''}
         >
         <label class="form-check-label" for="payment-${method.id}">
           ${method.paymentMethod}
@@ -433,60 +441,111 @@ datePicker.addEventListener('change', function() {
 // Confirm booking button (demo only)
 const confirmBtn = document.getElementById('confirmBooking');
 
+function showFieldError(id, message) {
+  const element = document.getElementById(id);
+  if (element) {
+    element.innerText = message;
+    element.classList.remove('d-none');
+  }
+}
+
+function clearFieldError(id) {
+  const element = document.getElementById(id);
+  if (element) {
+    element.classList.add('d-none');
+  }
+}
+
 if (confirmBtn) {
   confirmBtn.addEventListener('click', async () => {
+    clearFieldError('fullNameError');
+    clearFieldError('contactNoError');
+    clearFieldError('formError');
 
     const activeStylist = document.querySelector('.stylist-card.active');
     const activeTimeSlot = document.querySelector('.time-slot.active');
     const selectedPayment = document.querySelector('input[name="payment"]:checked');
-
-    if (!activeStylist) {
-      alert('Please select a stylist.');
-      return;
-    }
-
-    if (!datePicker.value) {
-      alert('Please select a date.');
-      return;
-    }
-
-    if (!activeTimeSlot) {
-      alert('Please select a time slot.');
-      return;
-    }
-
     const fullName = document.getElementById('fullName').value.trim();
     const contactNo = document.getElementById('contactNo').value.trim();
     const specialRequests = document.getElementById('specialRequests').value.trim();
+    const selectedDate = datePicker ? datePicker.value : '';
+    const todayDate = new Date().toISOString().split('T')[0];
 
-    if (!fullName || !contactNo) {
-      alert('Please fill in your details.');
+    let hasError = false;
+
+    if (!activeStylist) {
+      showFieldError('formError', 'Please select a stylist.');
+      hasError = true;
+    }
+
+    if (!selectedDate) {
+      showFieldError('formError', 'Please select a date.');
+      hasError = true;
+    } else if (selectedDate < todayDate) {
+      showFieldError('formError', 'Selected date cannot be in the past.');
+      hasError = true;
+    }
+
+    if (!activeTimeSlot) {
+      showFieldError('formError', 'Please select a time slot.');
+      hasError = true;
+    }
+
+    if (!fullName || fullName.length < 2) {
+      showFieldError('fullNameError', 'Please enter your full name (2+ characters).');
+      hasError = true;
+    }
+
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(contactNo)) {
+      showFieldError('contactNoError', 'Contact number must be exactly 10 digits.');
+      hasError = true;
+    }
+
+    if (!selectedPayment) {
+      showFieldError('formError', 'Please select a payment method.');
+      hasError = true;
+    }
+
+    if (hasError) {
+      const firstError = document.querySelector('.text-danger:not(.d-none)');
+      if (firstError) {
+        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
       return;
     }
 
     const userId = 1; // replace with logged-in user ID
     const stylistId = activeStylist.dataset.id;
     const paymentMethodId = selectedPayment.value;
-
     const startTime = activeTimeSlot.innerText;
 
-    const endHour = parseInt(startTime.split(':')[0]) + 1;
-    const endTime = `${endHour.toString().padStart(2, '0')}:00`;
+    let gapHours = 1;
+    if (currentServiceDuration >= 60 && currentServiceDuration <= 120) {
+      gapHours = 2;
+    }
 
+    const startHour = parseInt(startTime.split(':')[0]);
+    const endHour = startHour + gapHours;
+    const endTime = `${endHour.toString().padStart(2, '0')}:00`;
     const bookingData = {
-      userId: userId,
-      fullName: fullName,
-      contactNo: contactNo,
+      userId,
+      fullName,
+      contactNo,
       serviceId: parseInt(serviceId),
       stylistProfileId: parseInt(stylistId),
-      appointmentDate: datePicker.value,
-      startTime: startTime,
-      endTime: endTime,
-      specialRequests: specialRequests,
+      appointmentDate: selectedDate,
+      startTime,
+      endTime,
+      specialRequests,
       total: currentServicePrice,
       paymentMethodId: parseInt(paymentMethodId),
       appointmentStatusId: 1
     };
+
+    confirmBtn.disabled = true;
+    const originalText = confirmBtn.innerHTML;
+    confirmBtn.innerHTML = '<i class="bi bi-clock"></i> Booking...';
 
     try {
       const response = await fetch(`${API_BASE}/appointments`, {
@@ -498,15 +557,18 @@ if (confirmBtn) {
       });
 
       if (!response.ok) {
-        throw new Error('Booking failed');
+        const errorText = await response.text().catch(() => 'Booking failed.');
+        throw new Error(errorText || 'Booking failed.');
       }
 
-      alert('Booking created successfully!');
+      window.alert('Booking created successfully!');
       window.location.reload();
-
     } catch (error) {
       console.error(error);
-      alert('Failed to create booking.');
+      showFieldError('formError', 'Failed to create booking. Please try again.');
+    } finally {
+      confirmBtn.disabled = false;
+      confirmBtn.innerHTML = originalText;
     }
   });
 }
@@ -528,6 +590,40 @@ document.addEventListener('DOMContentLoaded', () => {
       bookedDateSearch.value = todayDate;
       bookedDateSearch.min = todayDate;
   }
+
+
+  const contactNoField = document.getElementById('contactNo');
+  const contactNoError = document.getElementById('contactNoError');
+  
+    if (contactNoField) {
+      // Prevent non-numeric characters and enforce max length of 10
+      contactNoField.addEventListener('keypress', function(e) {
+        if (!/[0-9]/.test(e.key) || this.value.length >= 10) {
+          e.preventDefault();
+          contactNoError.classList.remove('d-none');
+          setTimeout(() => { contactNoError.classList.add('d-none'); }, 2000);
+        }
+      });
+
+      // Handle paste events and truncate to 10 digits
+      contactNoField.addEventListener('paste', function(e) {
+        e.preventDefault();
+        const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+        const numericOnly = pastedText.replace(/[^0-9]/g, '').slice(0, 10);
+
+        if (numericOnly.length !== pastedText.replace(/\s/g, '').length) {
+          contactNoError.classList.remove('d-none');
+          setTimeout(() => { contactNoError.classList.add('d-none'); }, 2000);
+        }
+
+        this.value = numericOnly;
+      });
+
+      // Optional: trim extra digits on input (in case of autofill)
+      contactNoField.addEventListener('input', function() {
+        if (this.value.length > 10) this.value = this.value.slice(0, 10);
+      });
+    }
 
   loadServiceDetails();
   loadStylists();

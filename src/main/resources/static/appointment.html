@@ -110,7 +110,7 @@
                 <label class="form-label">Service</label>
                 <div>
                   <strong id="serviceName">Loading...</strong> —
-                  $<span id="servicePrice">0</span>
+                  LKR <span id="servicePrice">0</span>
                 </div>
               </div>
 
@@ -173,16 +173,20 @@
                       id="fullName"
                       placeholder="Enter your full name"
               >
+              <small class="text-danger d-none" id="fullNameError">Please enter your full name (2+ characters).</small>
             </div>
 
             <div class="mb-3">
               <label class="form-label">Contact Number</label>
               <input
-                      type="text"
+                      type="tel"
+                      inputmode="numeric"
+                      maxlength="10"
                       class="form-control"
                       id="contactNo"
                       placeholder="Enter contact number"
               >
+              <small class="text-danger d-none" id="contactNoError">Contact number must be exactly 10 digits.</small>
             </div>
 
             <div class="mb-3">
@@ -200,7 +204,6 @@
           <!-- Payment -->
           <div class="booking-card">
             <h3>Payment</h3>
-            <p class="text-secondary">(Demo – no actual payment will be processed)</p>
 
             <div id="paymentMethodsContainer">
               <!-- Payment methods will load here -->
@@ -232,11 +235,12 @@
 
             <div class="summary-total">
               <span>Total</span>
-              <span id="summaryTotal">$89</span>
+              <span id="summaryTotal">LKR 0</span>
             </div>
             <button class="btn-book-now" id="confirmBooking">
               <i class="bi bi-calendar-check"></i> Confirm booking
             </button>
+            <small class="text-danger d-none d-block mt-2" id="formError">Please fix the highlighted errors before submitting.</small>
             <p class="text-center text-secondary mt-3 small">
               <i class="bi bi-shield-lock"></i> No payment taken now
             </p>

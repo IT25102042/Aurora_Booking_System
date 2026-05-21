@@ -47,9 +47,10 @@ public class AppointmentController {
     @GetMapping("/available-slots/{stylistId}/{date}")
     public List<String> getAvailableSlots(
             @PathVariable Integer stylistId,
-            @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+            @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+            @RequestParam(required = false) Integer serviceId) {
 
-        return appointmentService.getAvailableSlots(stylistId, date);
+        return appointmentService.getAvailableSlots(stylistId, date, serviceId);
     }
 
     @GetMapping("/status/{statusId}")

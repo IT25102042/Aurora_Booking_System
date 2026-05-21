@@ -1180,6 +1180,7 @@
                 <ul class="nav nav-tabs admin-tabs" id="stylistManagementTabs" role="tablist">
                     <li class="nav-item"><button class="nav-link active" data-tab-target="stylists-list" type="button" role="tab">Stylists</button></li>
                     <li class="nav-item"><button class="nav-link" data-tab-target="stylist-services" type="button" role="tab">Stylist Services</button></li>
+                    <li class="nav-item"><button class="nav-link" data-tab-target="stylist-role" type="button" role="tab">Stylist Role</button></li>
                 </ul>
                 <div class="tab-content" id="stylistManagementTabContent">
                     <div class="tab-pane active" id="stylists-list" role="tabpanel">
@@ -1220,6 +1221,28 @@
                                     <table id="stylistServicesTable">
                                         <thead><tr><th>Service ID</th><th>Service Name</th><th>Category</th><th>Actions</th></tr></thead>
                                         <tbody><tr><td colspan="4" class="text-center py-4">Search and select a stylist to view their services</td></tr></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="stylist-role" role="tabpanel">
+                        <div class="row mt-4">
+                            <div class="col-md-5">
+                                <h3>Add New Stylist Role</h3>
+                                <form>
+                                    <div class="form-group"><label class="form-label">Role Name</label><input type="text" id="newStylistRoleName" class="form-control" placeholder="Enter Role name"></div>
+                                    <button type="button" id="addStylistRoleBtn" class="btn-primary">Add Role</button>
+                                </form>
+                            </div>
+                            <div class="col-md-7">
+                                <h3>Existing Stylist Roles</h3>
+                                <div class="table-container">
+                                    <table id="stylistRolesTable">
+                                        <thead><tr><th>Role ID</th><th>Role Name</th><th>Actions</th></tr></thead>
+                                        <tbody id="stylistRolesTableBody">
+                                        <tr><td colspan="3" class="text-center py-4">Loading Roles</td></tr>
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>

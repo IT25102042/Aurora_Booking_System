@@ -117,32 +117,35 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public void deleteReview(Integer reviewId, Integer userId) throws IOException {
 
-        // 1.Get review
+        // 1. Get review
         ReviewEntity review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("Review not found"));
 
-        // 2.Only owner can delete
-        if (!review.getUser().getId().equals(userId)) {
-            throw new RuntimeException("You can only delete your own review");
+        // 2. Check owner
+        boolean isOwner = review.getUser().getId().equals(userId);
+
+        // 3. Check admin directly from DB — avoid lazy loading issue
+        boolean isAdmin = userRepository.findById(userId)
+                .map(u -> u.getUserType() != null && u.getUserType().getId().equals(1))
+                .orElse(false);
+
+        if (!isOwner && !isAdmin) {
+            throw new RuntimeException("You are not authorized to delete this review");
         }
 
-        // 3.Delete from DB
+        // 4. Delete from DB
         reviewRepository.delete(review);
 
-        // 4.Delete photo folder if exists
+        // 5. Delete photo folder if exists
         String uploadDir = getReviewImageDir(reviewId);
         File uploadPath = new File(uploadDir);
-
-        System.out.println("Deleting photo folder: " + uploadDir);
-        System.out.println("Folder exists: " + uploadPath.exists());
-
         if (uploadPath.exists()) {
             deleteDirectory(uploadPath);
-            System.out.println("Folder deleted successfully");
         }
     }
 
     // Helper — Get Review Image Directory
+
     private String getReviewImageDir(Integer reviewId) {
         try {
             String staticPath = new ClassPathResource("static/review_images").getFile().getAbsolutePath();
@@ -153,6 +156,7 @@ public class ReviewServiceImpl implements ReviewService {
             return projectRoot + "/src/main/resources/static/review_images/" + reviewId;
         }
     }
+
     // Get My Reviews
 
     @Override
@@ -166,6 +170,14 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public List<ReviewResponseDto> getReviewsByService(Integer serviceId) {
         List<ReviewEntity> reviews = reviewRepository.findByAppointment_Service_Id(serviceId);
+        return mapToResponseDtoList(reviews);
+    }
+
+    // Get All Reviews (AdminPanel)
+
+    @Override
+    public List<ReviewResponseDto> getAllReviews() {
+        List<ReviewEntity> reviews = reviewRepository.findAll();
         return mapToResponseDtoList(reviews);
     }
 

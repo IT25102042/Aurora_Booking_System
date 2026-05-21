@@ -92,4 +92,16 @@ public class ReviewController {
         }
     }
 
+    //Get All Reviews (Admin Panel)
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllReviews() {
+        try {
+            List<ReviewResponseDto> reviews = reviewService.getAllReviews();
+            return ResponseEntity.ok(reviews);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 }

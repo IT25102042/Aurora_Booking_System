@@ -13,7 +13,7 @@ async function signIn() {
     };
 
     try {
-        const response = await fetch('http://localhost:8080/api/users/signin', {
+        const response = await fetch('/api/users/signin', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -25,8 +25,36 @@ async function signIn() {
         const data = await response.json();
 
         if (response.ok && data.status) {
-            // Success
-            window.location.href = "home.html";
+            // Success - Determine where to redirect
+            const queryParams = new URLSearchParams(window.location.search);
+            const urlRedirect = queryParams.get('redirect');
+            const sessionRedirect = sessionStorage.getItem('postLoginRedirect');
+            
+            // Prioritize URL parameter then sessionStorage
+            let redirectUrl = urlRedirect || sessionRedirect;
+            
+            if (redirectUrl) {
+                // Clear the temporary storage
+                sessionStorage.removeItem('postLoginRedirect');
+                
+                // Decode if it's double encoded for some reason
+                try {
+                   if (redirectUrl.includes('%')) {
+                       redirectUrl = decodeURIComponent(redirectUrl);
+                   }
+                } catch(e) {}
+
+                // If not absolute and not external, make it absolute from site root
+                if (!redirectUrl.startsWith('/') && !redirectUrl.startsWith('http')) {
+                    redirectUrl = '/' + redirectUrl;
+                }
+
+                console.log("Redirecting to: " + redirectUrl);
+                window.location.href = redirectUrl;
+            } else {
+                console.log("No redirect found, going to home.html");
+                window.location.href = "home.html";
+            }
         } else {
             // Failed
             alert(data.message || "Sign In Failed!");

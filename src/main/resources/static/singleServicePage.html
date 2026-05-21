@@ -945,12 +945,6 @@
                     <a class="nav-link" href="services.html">Services</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#gallery">Gallery</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="review.html">Reviews</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="wishlist.html">Wishlist</a>
                 </li>
             </ul>
@@ -963,7 +957,7 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                         <li>
-                            <h6 class="dropdown-header text-neon">Welcome Guest</h6>
+                            <h6 class="dropdown-header text-neon" id="welcomeUserText">Welcome Guest</h6>
                         </li>
                         <li>
                             <hr class="dropdown-divider">
@@ -974,9 +968,10 @@
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item btn-signin" href="signIn.html"><i class="fas fa-sign-in-alt"></i>Sign In</a>
+                        <li id="navSignIn"><a class="dropdown-item btn-signin" href="signIn.html"><i class="fas fa-sign-in-alt"></i>Sign In</a>
                         </li>
-                        <li><a class="dropdown-item" href="signUp.html"><i class="fas fa-user-plus"></i>Register</a></li>
+                        <li id="navSignUp"><a class="dropdown-item" href="signUp.html"><i class="fas fa-user-plus"></i>Register</a></li>
+                        <li id="navSignOut" style="display: none;"><a class="dropdown-item" href="#" onclick="signOut()"><i class="fas fa-sign-out-alt"></i>Sign Out</a></li>
                     </ul>
                 </li>
             </ul>
@@ -1286,7 +1281,7 @@
 <a href="#" class="back-to-top"><i class="bi bi-arrow-up"></i></a>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/ServiceJS/serviceDisplay.js"></script>
+<script src="js/ServiceJS/serviceDisplay.js?v=2"></script>
 <script src="js/ReviewJS/SingleServiceReviews.js"></script>
 <script>
     // ========== INITIALIZE THEME ==========
@@ -1385,11 +1380,24 @@
     const favBtn = document.getElementById('favBtn');
     favBtn.addEventListener('click', () => favBtn.classList.toggle('active'));
 
-    // ========== BOOK NOW SIMULATION ==========
+    // ========== BOOK NOW Logic ==========
     document.getElementById('bookNowBtn').addEventListener('click', () => {
-      alert('Booking confirmed (demo) – thank you!');
+        const urlParams = new URLSearchParams(window.location.search);
+        const serviceId = urlParams.get('id');
+        
+        // Use window.currentUser set by globalNav.js for consistency
+        if (window.currentUser) {
+            window.location.href = `/appointment.html?serviceId=${serviceId}`;
+        } else {
+            // Need to sign in first, pass the redirect URL
+            const redirectUrlTarget = `/appointment.html?serviceId=${serviceId}`;
+            sessionStorage.setItem('postLoginRedirect', redirectUrlTarget);
+            // Pass in encoded format
+            window.location.href = `signIn.html?redirect=${encodeURIComponent(redirectUrlTarget)}`;
+        }
     });
 </script>
+<script src="js/UserJS/globalNav.js?v=4"></script>
 </body>
 
 </html>

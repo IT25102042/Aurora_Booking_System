@@ -33,7 +33,7 @@
         .theme-btn.female { background: #b92c62; color: #f3e8e7; }
         .theme-btn.male { background: transparent; color: var(--text-primary); border: 1px solid #00d0ff; }
         .theme-btn.active { transform: scale(1.05); box-shadow: 0 0 30px var(--accent-2); }
-        .review-header { padding: 120px 0 40px; background: var(--gradient-1); color: var(--text-primary); position: relative; overflow: hidden; border-bottom: 1px solid var(--accent-1); }
+        .review-header { padding: 40px 0 40px; background: var(--gradient-1); color: var(--text-primary); position: relative; overflow: hidden; border-bottom: 1px solid var(--accent-1); }
         .review-header .breadcrumb { background: transparent; margin-bottom: 0; }
         .review-header .breadcrumb-item, .review-header .breadcrumb-item a { color: var(--text-secondary); text-decoration: none; }
         .review-header .breadcrumb-item.active { color: var(--accent-2); }
@@ -70,28 +70,6 @@
 <div class="custom-cursor"></div>
 <div class="cursor-dot"></div>
 <div class="scroll-progress" id="scrollProgress"></div>
-
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
-    <div class="container">
-        <a class="navbar-brand" href="home.html">AURORA</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav mx-auto">
-                <li class="nav-item"><a class="nav-link" href="home.html">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="services.html">Services</a></li>
-                <li class="nav-item"><a class="nav-link active" href="review.html">Reviews</a></li>
-                <li class="nav-item"><a class="nav-link" href="wishlist.html">Wishlist</a></li>
-            </ul>
-            <div class="theme-toggle">
-                <button class="theme-btn female active" id="femaleTheme"><i class="bi bi-venus"></i> Feminine</button>
-                <button class="theme-btn male" id="maleTheme"><i class="bi bi-mars"></i> Masculine</button>
-            </div>
-        </div>
-    </div>
-</nav>
 
 <div class="content-wrapper">
 
@@ -319,5 +297,6 @@
 <!-- Review JS -->
 <script src="js/ReviewJS/review.js"></script>
 
+<script src="js/UserJS/globalNav.js?v=4"></script>
 </body>
 </html>

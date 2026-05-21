@@ -540,7 +540,7 @@
     .service-action:nth-child(1) { transition-delay: 0.1s; }
     .service-action:nth-child(2) { transition-delay: 0.2s; }
     .service-action:nth-child(3) { transition-delay: 0.3s; }
-    .service-action:hover {
+    .service-action:hover, .service-action.active {
       background: var(--accent-2);
       color: white;
     }
@@ -775,7 +775,7 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
               <li>
-                <h6 class="dropdown-header text-neon">Welcome Guest</h6>
+                <h6 class="dropdown-header text-neon" id="welcomeUserText">Welcome Guest</h6>
               </li>
               <li>
                 <hr class="dropdown-divider">
@@ -786,9 +786,10 @@
               <li>
                 <hr class="dropdown-divider">
               </li>
-              <li><a class="dropdown-item btn-signin" href="signIn.html"><i class="fas fa-sign-in-alt"></i>Sign In</a>
+              <li id="navSignIn"><a class="dropdown-item btn-signin" href="signIn.html"><i class="fas fa-sign-in-alt"></i>Sign In</a>
               </li>
-              <li><a class="dropdown-item" href="signUp.html"><i class="fas fa-user-plus"></i>Register</a></li>
+              <li id="navSignUp"><a class="dropdown-item" href="signUp.html"><i class="fas fa-user-plus"></i>Register</a></li>
+              <li id="navSignOut" style="display: none;"><a class="dropdown-item" href="#" onclick="signOut()"><i class="fas fa-sign-out-alt"></i>Sign Out</a></li>
             </ul>
           </li>
         </ul>

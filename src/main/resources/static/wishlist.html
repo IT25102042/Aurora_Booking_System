@@ -482,6 +482,39 @@
             transform: none;
           }
         }
+
+        /* Search styling */
+        .search-container {
+          position: relative;
+          flex: 1;
+          max-width: 300px;
+        }
+        .search-input {
+          width: 100%;
+          padding: 12px 45px 12px 20px;
+          border: 2px solid var(--text-secondary);
+          border-radius: 50px;
+          background: var(--glass-bg);
+          color: var(--text-primary);
+          transition: all 0.4s ease;
+        }
+        .search-input:focus {
+          outline: none;
+          border-color: var(--accent-2);
+          box-shadow: var(--neon-glow);
+        }
+        .search-btn {
+          position: absolute;
+          right: 5px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: transparent;
+          border: none;
+          color: var(--text-secondary);
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+        }
     </style>
 </head>
 <body class="female-theme">
@@ -561,6 +594,15 @@
 
     <section class="wishlist-grid">
         <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3" style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 1.5rem;">
+                <div class="wishlist-count-text" style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem;">
+                    Saved Treatments (<span id="wishlistCount">0</span>)
+                </div>
+                <div class="search-container">
+                    <input type="text" class="search-input" id="wishlistSearchInput" placeholder="Search saved services...">
+                    <button type="button" class="search-btn" id="wishlistSearchBtn"><i class="bi bi-search"></i></button>
+                </div>
+            </div>
             <div class="row g-4" id="wishlistGrid">
                 <!-- Dynamically populated from database -->
             </div>

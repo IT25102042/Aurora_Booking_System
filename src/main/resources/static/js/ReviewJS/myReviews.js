@@ -1,9 +1,8 @@
 // myReviews.js
-// Triggered when user clicks My Reviews tab
+// Handles the Reviews tab in myAccount.html
+// Fetches reviews from GET /api/reviews/my?userId=X and renders them
 
 document.addEventListener("DOMContentLoaded", function () {
-
-    // Find the My Reviews tab link and attach click listener
     const reviewTabLink = document.querySelector('[data-tab="reviews"]');
     if (reviewTabLink) {
         reviewTabLink.addEventListener('click', function () {
@@ -31,14 +30,14 @@ async function loadMyReviews() {
         });
 
         const reviews = await reviewRes.json();
-        renderMyReviews(reviews);
+        renderMyReviews(reviews, userId);
 
     } catch (error) {
         console.error("Error loading reviews:", error);
     }
 }
 
-function renderMyReviews(reviews) {
+function renderMyReviews(reviews, userId) {
     const container = document.querySelector('#reviews .account-card');
 
     if (!reviews || reviews.length === 0) {
@@ -57,6 +56,13 @@ function renderMyReviews(reviews) {
         const stars = renderStars(review.rating);
         const date = formatDate(review.createdAt);
         const photoUrl = `http://localhost:8080/review_images/${review.id}/image1.png`;
+
+        // Show Edit button only if not yet updated
+        const editBtn = review.isUpdated
+            ? `<span style="font-size:11px; color:var(--text-secondary); font-style:italic;">Already updated</span>`
+            : `<button class="btn-review-edit" onclick="goToEditReview(${review.id})">
+                   <i class="bi bi-pencil-square"></i> Edit
+               </button>`;
 
         html += `
             <div class="review-item" id="review-${review.id}">
@@ -77,11 +83,65 @@ function renderMyReviews(reviews) {
                     ${stars}
                 </div>
                 <p>${review.reviewText}</p>
+                <div class="review-actions">
+                    ${editBtn}
+                    <button class="btn-review-delete" onclick="deleteReview(${review.id}, ${userId})">
+                        <i class="bi bi-trash-fill"></i> Delete
+                    </button>
+                </div>
             </div>
         `;
     });
 
     container.innerHTML = html;
+}
+
+// ─── Go to Edit Page ──────────────────────────────────────────────────────────
+
+function goToEditReview(reviewId) {
+    window.location.href = `editReview.html?reviewId=${reviewId}`;
+}
+
+// ─── Delete Review ────────────────────────────────────────────────────────────
+
+async function deleteReview(reviewId, userId) {
+
+    // Confirm before deleting
+    if (!confirm("Are you sure you want to permanently delete this review?")) {
+        return;
+    }
+
+    try {
+        const res = await fetch(`http://localhost:8080/api/reviews/${reviewId}?userId=${userId}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+
+        if (res.ok) {
+            // Remove the review card from DOM immediately
+            const reviewCard = document.getElementById(`review-${reviewId}`);
+            if (reviewCard) reviewCard.remove();
+
+            // Check if no reviews left
+            const remaining = document.querySelectorAll('.review-item');
+            if (remaining.length === 0) {
+                const container = document.querySelector('#reviews .account-card');
+                container.innerHTML = `
+                    <h3>Review History</h3>
+                    <p class="text-secondary" style="margin-top: 1rem;">
+                        You have not submitted any reviews yet.
+                    </p>
+                `;
+            }
+        } else {
+            const msg = await res.text();
+            alert(msg);
+        }
+
+    } catch (error) {
+        console.error("Error deleting review:", error);
+        alert("Something went wrong. Please try again.");
+    }
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

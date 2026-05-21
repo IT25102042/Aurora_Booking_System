@@ -2,6 +2,7 @@ package com.saloon.aurora.controller;
 
 import com.saloon.aurora.dto.ReviewRequestDto;
 import com.saloon.aurora.dto.ReviewResponseDto;
+import com.saloon.aurora.dto.ReviewUpdateRequestDto;
 import com.saloon.aurora.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,8 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    // ─── Submit Review ────────────────────────────────────────────────────────
+    // Submit Review
+
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<?> submitReview(
             @RequestPart("review") @Valid ReviewRequestDto reviewRequestDto,
@@ -35,7 +37,39 @@ public class ReviewController {
         }
     }
 
-    // ─── Get My Reviews ───────────────────────────────────────────────────────
+    // Update Review
+
+    @PutMapping("/{reviewId}")
+    public ResponseEntity<?> updateReview(
+            @PathVariable Integer reviewId,
+            @RequestBody @Valid ReviewUpdateRequestDto reviewUpdateRequestDto,
+            @RequestParam Integer userId) {
+        try {
+            reviewService.updateReview(reviewId, reviewUpdateRequestDto, userId);
+            return ResponseEntity.ok("Review updated successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // Delete Review
+
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<?> deleteReview(
+            @PathVariable Integer reviewId,
+            @RequestParam Integer userId) {
+        try {
+            reviewService.deleteReview(reviewId, userId);
+            return ResponseEntity.ok("Review deleted successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().body("Failed to delete review photo");
+        }
+    }
+
+    // Get My Reviews
+
     @GetMapping("/my")
     public ResponseEntity<?> getMyReviews(@RequestParam Integer userId) {
         try {
@@ -46,7 +80,8 @@ public class ReviewController {
         }
     }
 
-    // ─── Get Reviews By Service ───────────────────────────────────────────────
+    // Get Reviews By Service
+
     @GetMapping("/service/{serviceId}")
     public ResponseEntity<?> getReviewsByService(@PathVariable Integer serviceId) {
         try {

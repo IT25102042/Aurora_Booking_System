@@ -24,6 +24,8 @@ let currentFilters = {
     durations: []
 };
 let filterMaxPriceLimit = 500; // Will be updated from backend
+let currentUser = null;
+let userWishlistIds = new Set();
 
 // ===== DOM Elements =====
 const servicesGrid = document.getElementById('servicesGrid');
@@ -54,7 +56,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function initServicesPage() {
     loadFilterOptions();
-    loadActiveServices();
+    checkSessionAndWishlist().finally(() => {
+        loadActiveServices();
+    });
     bindEventListeners();
 }
 
@@ -469,13 +473,20 @@ function renderServices(services) {
         const duration = service.durationMinutes ? `${service.durationMinutes} min` : '';
         const category = service.categoryName || '';
 
+        const isWished = userWishlistIds.has(service.id);
+                const heartIconClass = isWished ? 'bi-heart-fill' : 'bi-heart';
+                const heartTitle = isWished ? 'Remove from Wishlist' : 'Add to Wishlist';
+                const heartActiveClass = isWished ? 'active' : '';
+
         const cardHtml = `
             <div class="col-md-6 col-lg-4">
                 <div class="service-card-item">
                     <div class="service-img">
                         <img src="${imgSrc}" alt="${service.title}" onerror="this.src='https://images.unsplash.com/photo-1560066984-138dadb4c035?w=500'">
                         <div class="service-overlay">
-                            <div class="service-action" title="Add to Wishlist"><i class="bi bi-heart"></i></div>
+                            <div class="service-action ${heartActiveClass}" title="${heartTitle}" onclick="toggleWishlist(event, ${service.id})">
+                                                            <i class="bi ${heartIconClass}"></i>
+                                                        </div>
                             <div class="service-action" title="View Details" onclick="window.location.href='singleServicePage.html?id=${service.id}'"><i class="bi bi-eye"></i></div>
                         </div>
                     </div>
@@ -594,6 +605,109 @@ function scrollToServicesTop() {
     const servicesSection = document.querySelector('.products-section');
     if (servicesSection) {
         servicesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+// ===== Session and Wishlist Status Loaders =====
+async function checkSessionAndWishlist() {
+    try {
+        const sessionResp = await fetch('http://localhost:8080/api/users/check-session', { credentials: 'include' });
+        const sessionData = await sessionResp.json();
+
+        if (sessionData.status && sessionData.user) {
+            currentUser = sessionData.user;
+            updateNavbar(currentUser);
+
+            // Fetch wishlist
+            const wishlistResp = await fetch('http://localhost:8080/api/wishlist', { credentials: 'include' });
+            if (wishlistResp.ok) {
+                const wishlist = await wishlistResp.json();
+                userWishlistIds = new Set(wishlist.map(item => item.id));
+            }
+        }
+    } catch (error) {
+        console.error("Error loading session/wishlist status:", error);
+    }
+}
+
+function updateNavbar(user) {
+    const welcomeUserText = document.getElementById("welcomeUserText");
+    const navSignIn = document.getElementById("navSignIn");
+    const navSignUp = document.getElementById("navSignUp");
+    const navSignOut = document.getElementById("navSignOut");
+
+    if (welcomeUserText) welcomeUserText.innerHTML = `Welcome ${user.firstName}`;
+    if (navSignIn) navSignIn.style.display = "none";
+    if (navSignUp) navSignUp.style.display = "none";
+    if (navSignOut) navSignOut.style.display = "block";
+}
+
+async function signOut() {
+    try {
+        const response = await fetch('http://localhost:8080/api/users/signout', { method: 'POST', credentials: 'include' });
+        const data = await response.json();
+
+        if (data.status) {
+            window.location.href = "home.html";
+        }
+    } catch (error) {
+        console.error("Error signing out:", error);
+    }
+}
+
+// ===== Toggle Service Wishlist Status =====
+async function toggleWishlist(event, serviceId) {
+    event.stopPropagation();
+
+    if (!currentUser) {
+        // Not logged in, redirect to login page
+        window.location.href = "signIn.html";
+        return;
+    }
+
+    const actionElement = event.currentTarget;
+    const isWished = actionElement.classList.contains('active');
+    const iconElement = actionElement.querySelector('i');
+
+    try {
+        if (isWished) {
+            // Remove from wishlist
+            const response = await fetch(`http://localhost:8080/api/wishlist/remove/${serviceId}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+            const data = await response.json();
+            if (data.status) {
+                userWishlistIds.delete(serviceId);
+                actionElement.classList.remove('active');
+                actionElement.setAttribute('title', 'Add to Wishlist');
+                if (iconElement) {
+                    iconElement.className = 'bi bi-heart';
+                }
+            } else {
+                alert("Failed to remove from wishlist: " + data.message);
+            }
+        } else {
+            // Add to wishlist
+            const response = await fetch(`http://localhost:8080/api/wishlist/add/${serviceId}`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+            const data = await response.json();
+            if (data.status) {
+                userWishlistIds.add(serviceId);
+                actionElement.classList.add('active');
+                actionElement.setAttribute('title', 'Remove from Wishlist');
+                if (iconElement) {
+                    iconElement.className = 'bi bi-heart-fill';
+                }
+            } else {
+                alert("Failed to add to wishlist: " + data.message);
+            }
+        }
+    } catch (error) {
+        console.error("Error toggling wishlist item:", error);
+        alert("An error occurred. Please try again.");
     }
 }
 

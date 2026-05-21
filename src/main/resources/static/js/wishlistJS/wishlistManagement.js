@@ -1,14 +1,54 @@
 const API_BASE = "http://localhost:8080/api";
+let allWishlistItems = [];
 
 document.addEventListener('DOMContentLoaded', () => {
     checkSessionAndLoadWishlist();
+    setupSearch();
 });
+
+function setupSearch() {
+    const searchInput = document.getElementById('wishlistSearchInput');
+    const searchBtn = document.getElementById('wishlistSearchBtn');
+
+    const performSearch = () => {
+        if (!searchInput) return;
+        const query = searchInput.value.toLowerCase().trim();
+
+        if (query === "") {
+            renderWishlist(allWishlistItems, false);
+            return;
+        }
+
+        const filteredItems = allWishlistItems.filter(item =>
+            (item.title && item.title.toLowerCase().includes(query)) ||
+            (item.description && item.description.toLowerCase().includes(query)) ||
+            (item.categoryName && item.categoryName.toLowerCase().includes(query))
+        );
+        renderWishlist(filteredItems, true);
+    };
+
+    if (searchInput) {
+        searchInput.addEventListener('input', performSearch);
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    }
+
+    if (searchBtn) {
+        searchBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            performSearch();
+        });
+    }
+}
 
 async function checkSessionAndLoadWishlist() {
     try {
         const response = await fetch(`${API_BASE}/users/check-session`, { credentials: 'include' });
         const data = await response.json();
-        
+
         if (data.status && data.user) {
             // Update navigation dropdown
             updateNavbar(data.user);
@@ -40,7 +80,7 @@ async function signOut() {
     try {
         const response = await fetch(`${API_BASE}/users/signout`, { method: 'POST', credentials: 'include' });
         const data = await response.json();
-        
+
         if (data.status) {
             window.location.href = "home.html";
         }
@@ -66,8 +106,13 @@ async function loadWishlistItems() {
         if (!response.ok) {
             throw new Error("Failed to fetch wishlist");
         }
-        const wishlistItems = await response.json();
-        renderWishlist(wishlistItems);
+        allWishlistItems = await response.json();
+
+        // Reset search input value on reload
+        const searchInput = document.getElementById('wishlistSearchInput');
+        if (searchInput) searchInput.value = '';
+
+        renderWishlist(allWishlistItems, false);
     } catch (error) {
         console.error("Error fetching wishlist:", error);
         grid.innerHTML = `
@@ -78,21 +123,36 @@ async function loadWishlistItems() {
     }
 }
 
-function renderWishlist(items) {
+function renderWishlist(items, isSearching = false) {
     const grid = document.getElementById('wishlistGrid');
     if (!grid) return;
 
     grid.innerHTML = '';
 
+    const countSpan = document.getElementById('wishlistCount');
+    if (countSpan) {
+        countSpan.textContent = items.length;
+    }
+
     if (!items || items.length === 0) {
-        grid.innerHTML = `
-            <div class="col-12 text-center my-5 py-5" style="background: var(--glass-bg); border-radius: 30px; border: 1px solid rgba(255,255,255,0.1);">
-                <i class="bi bi-heartbreak-fill display-1 mb-3" style="color: var(--accent-2);"></i>
-                <h3 class="mb-3">Your wishlist is empty</h3>
-                <p class="text-secondary mb-4">Discover our top-tier services and add your favorite treatments here!</p>
-                <a href="services.html" class="btn btn-edit px-4 py-2" style="background: var(--gradient-2); color: white; border: none; font-weight: 600; border-radius: 60px;">Explore Services</a>
-            </div>
-        `;
+        if (isSearching) {
+            grid.innerHTML = `
+                <div class="col-12 text-center my-5 py-5" style="background: var(--glass-bg); border-radius: 30px; border: 1px solid rgba(255,255,255,0.1);">
+                    <i class="bi bi-search display-1 mb-3" style="color: var(--accent-2);"></i>
+                    <h3 class="mb-3">No matching services found</h3>
+                    <p class="text-secondary mb-4">Try searching with a different term.</p>
+                </div>
+            `;
+        } else {
+            grid.innerHTML = `
+                <div class="col-12 text-center my-5 py-5" style="background: var(--glass-bg); border-radius: 30px; border: 1px solid rgba(255,255,255,0.1);">
+                    <i class="bi bi-heartbreak-fill display-1 mb-3" style="color: var(--accent-2);"></i>
+                    <h3 class="mb-3">Your wishlist is empty</h3>
+                    <p class="text-secondary mb-4">Discover our top-tier services and add your favorite treatments here!</p>
+                    <a href="services.html" class="btn btn-edit px-4 py-2" style="background: var(--gradient-2); color: white; border: none; font-weight: 600; border-radius: 60px;">Explore Services</a>
+                </div>
+            `;
+        }
         return;
     }
 

@@ -25,4 +25,6 @@ public interface ReviewService {
     // Get all reviews for a specific service (Single Service Page)
     List<ReviewResponseDto> getReviewsByService(Integer serviceId);
 
+    // Get all reviews done by user's
+    List<ReviewResponseDto> getAllReviews();
 }

@@ -953,7 +953,7 @@
                 <li><a href="#" class="nav-link" data-page="stylist-management"><i class="fas fa-users"></i><span>Stylist Management</span></a></li>
                 <li><a href="#" class="nav-link" data-page="service-management"><i class="fas fa-box"></i><span>Service Management</span></a></li>
                 <li><a href="#" class="nav-link" data-page="order-management"><i class="fas fa-shopping-cart"></i><span>Appointment Management</span></a></li>
-                <li><a href="#" class="nav-link" data-page="reviews"><i class="fas fa-chart-bar"></i><span>Review Management</span></a></li>
+                <li><a href="#" class="nav-link" data-page="reviews" onclick="loadAllReviews()"><i class="fas fa-chart-bar"></i><span>Review Management</span></a></li>
                 <li><a href="#" class="nav-link" data-page="settings"><i class="fas fa-cog"></i><span>Settings</span></a></li>
                 <li><a href="#" class="nav-link" data-page="logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
             </ul>
@@ -1292,19 +1292,19 @@
                     <h2 class="section-title">Review Management</h2>
                     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
                         <div class="search-box">
-                            <input type="text" id="reviewSearchInput" placeholder="Search reviews...">
+                            <input type="text" id="reviewSearchInput" placeholder="Search by service name...">
                             <i class="fas fa-search"></i>
                         </div>
-                        <button class="btn-primary" onclick="" style="padding:8px 16px;font-size:0.85rem;">
+                        <button class="btn-primary" onclick="refreshReviews()" style="padding:8px 16px;font-size:0.85rem;">
                             <i class="fas fa-sync-alt me-1"></i>Refresh
                         </button>
                     </div>
                 </div>
                 <div class="table-container">
                     <table>
-                        <thead><tr><th>Review ID</th><th>User</th><th>Appointment ID</th><th>Ratings</th><th>Review Text</th><th>Created_At</th><th>Actions</th></tr></thead>
+                        <thead><tr><th>Review ID</th><th>User</th><th>Appointment ID</th><th>Service Name</th><th>Ratings</th><th>Review Text</th><th>Created_At</th><th style="text-align:center;">Actions</th></tr></thead>
                         <tbody id="reviewTableBody">
-                        <tr><td colspan="9" style="text-align:center;padding:30px;color:var(--text-muted);"><i class="fas fa-spinner fa-spin me-2"></i>Loading Reviews…</td></tr>
+                        <tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text-muted);"><i class="fas fa-spinner fa-spin me-2"></i>Loading Reviews…</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -1891,6 +1891,8 @@
     <script src="js/AppointmentJS/appointmentManagement.js"></script>
     <script src="js/StylistJS/stylistProfiles.js?v=4"></script>
 
+    <!--link to adminReviewManagement.js File-->
+    <script src="js/ReviewJS/adminReviewManagement.js"></script>
 
     <script>
         // Toggle sidebar

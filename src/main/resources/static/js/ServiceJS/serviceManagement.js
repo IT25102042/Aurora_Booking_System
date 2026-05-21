@@ -846,3 +846,34 @@ function unassignStylist(serviceId, stylistProfileId) {
         });
     }
 }
+
+// --- Search/filter for All Services ---
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('serviceSearchInput1');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+            const tbody = document.getElementById('serviceTableBody');
+            if (!tbody) return;
+
+            const rows = tbody.querySelectorAll('tr');
+            rows.forEach(row => {
+                // Ignore the loading row if it exists
+                if (row.querySelector('td') && row.querySelector('td').getAttribute('colspan') === '9') {
+                    return;
+                }
+
+                const id = row.querySelector('td:nth-child(1)')?.textContent.toLowerCase() || '';
+                const title = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
+                const category = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() || '';
+                const gender = row.querySelector('td:nth-child(4)')?.textContent.toLowerCase() || '';
+
+                if (id.includes(query) || title.includes(query) || category.includes(query) || gender.includes(query)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    }
+});

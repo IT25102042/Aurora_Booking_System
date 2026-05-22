@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>My Wishlist · AURORA dimension salon</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Syncopate:wght@400;700&display=swap"
+            rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ========== AURORA BASE THEMES ========== */
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        html {
+          scroll-behavior: smooth;
+        }
+
+        body {
+          font-family: 'Space Grotesk', sans-serif;
+          overflow-x: hidden;
+          background: var(--bg-primary);
+          color: var(--text-primary);
+          transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ===== FEMALE LIGHT THEME ===== */
+        body.female-theme {
+          --bg-primary: #f3e8e7;
+          --bg-secondary: #eed5d2;
+          --accent-1: #ecafb8;
+          --accent-2: #b92c62;
+          --pure-white: #ffffff;
+          --text-primary: #2d1f2c;
+          --text-secondary: #5c4b5a;
+          --glow-primary: rgba(236, 175, 184, 0.6);
+          --glow-secondary: rgba(185, 44, 98, 0.5);
+          --neon-glow: 0 0 30px rgba(185, 44, 98, 0.3);
+          --glass-bg: rgba(255, 255, 255, 0.25);
+          --card-shadow: 0 30px 60px -15px rgba(185, 44, 98, 0.3);
+          --gradient-1: linear-gradient(135deg, #f3e8e7, #ecafb8);
+          --gradient-2: linear-gradient(45deg, #ecafb8, #b92c62);
+        }
+
+        /* ===== MALE DARK THEME ===== */
+        body.male-theme {
+          --bg-primary: #030514;
+          --bg-secondary: #0a1120;
+          --accent-1: #00d0ff;
+          --accent-2: #7a2eff;
+          --pure-white: #0f172a;
+          --text-primary: #ffffff;
+          --text-secondary: #a0b8d4;
+          --glow-primary: rgba(0, 208, 255, 0.6);
+          --glow-secondary: rgba(122, 46, 255, 0.5);
+          --neon-glow: 0 0 40px #00d0ff, 0 0 80px #7a2eff;
+          --glass-bg: rgba(10, 17, 32, 0.4);
+          --card-shadow: 0 30px 60px -15px rgba(0, 208, 255, 0.4);
+          --gradient-1: linear-gradient(135deg, #030514, #0a1120);
+          --gradient-2: linear-gradient(45deg, #00d0ff, #7a2eff);
+        }
+
+        /* Canvas 3D Background */
+        #canvas-3d {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 0;
+          pointer-events: none;
+        }
+
+        /* Custom Cursor */
+        .custom-cursor {
+          width: 20px;
+          height: 20px;
+          border: 2px solid var(--accent-2);
+          border-radius: 50%;
+          position: fixed;
+          pointer-events: none;
+          z-index: 9999;
+          transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.4, 1);
+          mix-blend-mode: difference;
+          transform: translate(-50%, -50%);
+        }
+
+        .cursor-dot {
+          width: 4px;
+          height: 4px;
+          background: var(--accent-2);
+          border-radius: 50%;
+          position: fixed;
+          pointer-events: none;
+          z-index: 9999;
+          transition: transform 0.1s ease;
+          transform: translate(-50%, -50%);
+        }
+
+        /* Main Content Wrapper */
+        .content-wrapper {
+          position: relative;
+          z-index: 2;
+        }
+
+        /* Navbar */
+        .navbar {
+          background: var(--glass-bg) !important;
+          backdrop-filter: blur(20px);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          padding: 1.2rem 0;
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          z-index: 1000;
+        }
+
+        .navbar.scrolled {
+          padding: 0.8rem 0;
+          background: var(--glass-bg) !important;
+          backdrop-filter: blur(30px);
+        }
+
+        .navbar-brand {
+          font-family: 'Syncopate', sans-serif;
+          font-weight: 700;
+          font-size: 1.8rem;
+          background: var(--gradient-2);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          letter-spacing: 2px;
+        }
+
+        .nav-link {
+          color: var(--text-primary) !important;
+          font-weight: 500;
+          margin: 0 1rem;
+          position: relative;
+          text-transform: uppercase;
+          font-size: 0.9rem;
+          letter-spacing: 1px;
+          transition: color 0.3s ease;
+        }
+
+        .nav-link::before {
+          content: '';
+          position: absolute;
+          bottom: -5px;
+          left: 0;
+          width: 0;
+          height: 2px;
+          background: var(--gradient-2);
+          transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-link:hover::before,
+        .nav-link.active::before {
+          width: 100%;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 0%;
+          height: 4px;
+          background: var(--gradient-2);
+          z-index: 9999;
+          transition: width 0.2s cubic-bezier(0.2, 0.9, 0.4, 1);
+        }
+
+        /* Theme Switcher Badge (top right subtle) */
+        .theme-switch-badge {
+          position: fixed;
+          bottom: 25px;
+          left: 25px;
+          z-index: 1001;
+          background: var(--glass-bg);
+          backdrop-filter: blur(20px);
+          border-radius: 60px;
+          padding: 8px 16px;
+          display: flex;
+          gap: 10px;
+          border: 1px solid rgba(255,255,255,0.2);
+          box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .theme-switch-badge .theme-btn {
+          border: none;
+          padding: 6px 18px;
+          border-radius: 40px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          transition: all 0.3s ease;
+          cursor: pointer;
+          background: transparent;
+          color: var(--text-primary);
+        }
+        .theme-switch-badge .theme-btn.active {
+          background: var(--accent-2);
+          color: white;
+          box-shadow: 0 0 12px var(--glow-secondary);
+        }
+
+        /* Footer */
+        .footer {
+          background: var(--glass-bg);
+          backdrop-filter: blur(20px);
+          padding: 4rem 0 2rem;
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .social-links {
+          display: flex;
+          gap: 1.5rem;
+          justify-content: center;
+          margin: 2rem 0;
+        }
+
+        .social-link {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          background: var(--gradient-2);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 1.5rem;
+          transition: all 0.6s cubic-bezier(0.2, 0.9, 0.4, 1);
+        }
+
+        .social-link:hover {
+          transform: rotate(360deg) scale(1.1);
+        }
+
+        /* ========== WISHLIST PAGE LAYOUT ========== */
+        .wishlist-header {
+          padding: 120px 0 40px;
+          background: var(--gradient-1);
+          color: var(--text-primary);
+          position: relative;
+          overflow: hidden;
+          border-bottom: 1px solid var(--accent-1);
+        }
+        .breadcrumb {
+          background: transparent;
+          margin-bottom: 0;
+        }
+        .breadcrumb-item a, .breadcrumb-item {
+          color: var(--text-secondary);
+          text-decoration: none;
+        }
+        .breadcrumb-item.active {
+          color: var(--accent-2);
+        }
+
+        /* Wishlist items grid */
+        .wishlist-grid {
+          padding: 60px 0;
+        }
+        .wishlist-card {
+          background: var(--glass-bg);
+          backdrop-filter: blur(16px);
+          border-radius: 30px;
+          border: 1px solid rgba(255,255,255,0.15);
+          overflow: hidden;
+          transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1);
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          position: relative;
+        }
+        .wishlist-card:hover {
+          transform: translateY(-12px);
+          box-shadow: var(--card-shadow);
+          border-color: var(--accent-2);
+        }
+        .card-img-top {
+          height: 240px;
+          object-fit: cover;
+          transition: transform 0.6s ease;
+        }
+        .wishlist-card:hover .card-img-top {
+          transform: scale(1.02);
+        }
+        .wishlist-body {
+          padding: 1.5rem;
+          flex: 1;
+        }
+        .wishlist-title {
+          font-size: 1.4rem;
+          font-weight: 700;
+          margin-bottom: 0.5rem;
+        }
+        .wishlist-price {
+          font-size: 1.2rem;
+          font-weight: 600;
+          color: var(--accent-2);
+          margin-bottom: 1rem;
+        }
+        .wishlist-desc {
+          font-size: 0.85rem;
+          color: var(--text-secondary);
+          margin-bottom: 1.25rem;
+          line-height: 1.4;
+        }
+        .card-actions {
+          display: flex;
+          gap: 12px;
+          margin-top: auto;
+        }
+        .btn-wishlist-book {
+          background: var(--gradient-2);
+          border: none;
+          color: white;
+          padding: 10px 0;
+          border-radius: 50px;
+          font-weight: 600;
+          font-size: 0.9rem;
+          flex: 1;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .btn-wishlist-book:hover {
+          transform: scale(0.98);
+          filter: brightness(1.05);
+        }
+        .btn-remove {
+          background: transparent;
+          border: 2px solid var(--text-secondary);
+          color: var(--text-secondary);
+          width: 44px;
+          border-radius: 50px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s ease;
+          font-size: 1.2rem;
+        }
+        .btn-remove:hover {
+          background: var(--accent-2);
+          border-color: var(--accent-2);
+          color: white;
+          transform: scale(0.95);
+        }
+
+        /* back to top */
+        .back-to-top {
+          position: fixed;
+          bottom: 30px;
+          right: 30px;
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          background: var(--accent-2);
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-decoration: none;
+          box-shadow: var(--neon-glow);
+          transition: all 0.4s ease;
+          opacity: 0;
+          visibility: hidden;
+          z-index: 1000;
+        }
+        .back-to-top.active {
+          opacity: 1;
+          visibility: visible;
+        }
+        .back-to-top:hover {
+          transform: translateY(-5px);
+        }
+
+        @media (max-width: 768px) {
+          .wishlist-header { padding: 100px 0 30px; }
+          .wishlist-title { font-size: 1.2rem; }
+          .card-actions { flex-wrap: wrap; }
+          .btn-remove { width: 100%; margin-top: 8px; }
+          .theme-switch-badge { bottom: 80px; left: 15px; padding: 5px 12px; }
+        }
+
+        /* User Dropdown Styling */
+        .user-dropdown {
+          color: var(--text-primary) !important;
+          font-size: 1.2rem;
+          transition: all 0.3s ease;
+          padding: 0.5rem !important;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .user-dropdown:hover {
+          color: var(--accent-2) !important;
+          transform: scale(1.1);
+        }
+
+        .dropdown-menu {
+          background: var(--glass-bg) !important;
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 15px;
+          padding: 1rem;
+          box-shadow: var(--card-shadow);
+          min-width: 200px;
+          margin-top: 10px !important;
+        }
+
+        .dropdown-item {
+          color: var(--text-primary) !important;
+          padding: 0.7rem 1rem;
+          border-radius: 10px;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          font-weight: 500;
+          font-size: 0.9rem;
+        }
+
+        .dropdown-item i {
+          width: 20px;
+          margin-right: 10px;
+          color: var(--accent-2);
+          font-size: 1.1rem;
+        }
+
+        .dropdown-item:hover {
+          background: var(--gradient-2) !important;
+          color: white !important;
+          transform: translateX(5px);
+        }
+
+        .dropdown-item:hover i {
+          color: white;
+        }
+
+        .dropdown-divider {
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          margin: 0.5rem 0;
+        }
+
+        .dropdown-header {
+          color: var(--text-secondary);
+          font-weight: 600;
+          text-transform: uppercase;
+          font-size: 0.7rem;
+          letter-spacing: 1px;
+          padding: 0.5rem 1rem;
+        }
+
+        .text-neon {
+            color: var(--accent-2) !important;
+            text-shadow: 0 0 10px var(--glow-secondary);
+        }
+
+        /* Responsiveness for User Dropdown */
+        @media (max-width: 991px) {
+          .user-dropdown {
+            justify-content: flex-start;
+            padding: 1rem 0 !important;
+          }
+          .dropdown-menu {
+            background: transparent !important;
+            border: none;
+            box-shadow: none;
+            padding-left: 1rem;
+            backdrop-filter: none;
+            margin-top: 0 !important;
+          }
+          .dropdown-item:hover {
+            transform: none;
+          }
+        }
+
+        /* Search styling */
+        .search-container {
+          position: relative;
+          flex: 1;
+          max-width: 300px;
+        }
+        .search-input {
+          width: 100%;
+          padding: 12px 45px 12px 20px;
+          border: 2px solid var(--text-secondary);
+          border-radius: 50px;
+          background: var(--glass-bg);
+          color: var(--text-primary);
+          transition: all 0.4s ease;
+        }
+        .search-input:focus {
+          outline: none;
+          border-color: var(--accent-2);
+          box-shadow: var(--neon-glow);
+        }
+        .search-btn {
+          position: absolute;
+          right: 5px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: transparent;
+          border: none;
+          color: var(--text-secondary);
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="female-theme">
+
+<canvas id="canvas-3d"></canvas>
+
+<div class="custom-cursor"></div>
+<div class="cursor-dot"></div>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand" href="#">AURORA</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="home.html">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="services.html">Services</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="wishlist.html">Wishlist</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown ms-lg-2">
+                    <a class="nav-link dropdown-toggle user-dropdown" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle fa-lg"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li>
+                            <h6 class="dropdown-header text-neon" id="welcomeUserText">Welcome Guest</h6>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="myAccount.html"><i class="fas fa-user"></i>My Account</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-question-circle"></i>Support</a> </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li id="navSignIn"><a class="dropdown-item btn-signin" href="signIn.html"><i class="fas fa-sign-in-alt"></i>Sign In</a> </li>
+                        <li id="navSignUp"><a class="dropdown-item" href="signUp.html"><i class="fas fa-user-plus"></i>Register</a></li>
+                        <li id="navSignOut" style="display: none;"><a class="dropdown-item" href="#" onclick="signOut()"><i class="fas fa-sign-out-alt"></i>Sign Out</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="content-wrapper">
+    <section class="wishlist-header">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Account</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">My Wishlist</li>
+                </ol>
+            </nav>
+            <h1 class="display-5 fw-bold mt-3" style="background: var(--gradient-2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">✨ My Beauty Treasury</h1>
+            <p class="lead" style="color: var(--text-secondary);">Your favorite AURORA treatments, saved for the perfect moment.</p>
+        </div>
+    </section>
+
+    <section class="wishlist-grid">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3" style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 1.5rem;">
+                <div class="wishlist-count-text" style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem;">
+                    Saved Treatments (<span id="wishlistCount">0</span>)
+                </div>
+                <div class="search-container">
+                    <input type="text" class="search-input" id="wishlistSearchInput" placeholder="Search saved services...">
+                    <button type="button" class="search-btn" id="wishlistSearchBtn"><i class="bi bi-search"></i></button>
+                </div>
+            </div>
+            <div class="row g-4" id="wishlistGrid">
+                <!-- Dynamically populated from database -->
+            </div>
+        </div>
+    </section>
+</div>
+<script src="js/WishListJS/wishlistManagement.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/UserJS/globalNav.js?v=4"></script>
+</body>
+</html>

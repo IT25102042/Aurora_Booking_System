@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Single Service · AURORA dimension salon</title>
+    <!-- Bootstrap 5 + icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- GSAP + ScrollTrigger + 3D libraries (kept for theme continuity) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+    <!-- Google Fonts -->
+    <link
+            href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Syncopate:wght@400;700&display=swap"
+            rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ========== AURORA BASE THEMES (copied from homepage) ========== */
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        html {
+          scroll-behavior: smooth;
+        }
+
+        body {
+          font-family: 'Space Grotesk', sans-serif;
+          overflow-x: hidden;
+          background: var(--bg-primary);
+          color: var(--text-primary);
+          transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ===== FEMALE LIGHT THEME ===== */
+        body.female-theme {
+          --bg-primary: #f3e8e7;
+          --bg-secondary: #eed5d2;
+          --accent-1: #ecafb8;
+          --accent-2: #b92c62;
+          --pure-white: #ffffff;
+          --text-primary: #2d1f2c;
+          --text-secondary: #5c4b5a;
+          --glow-primary: rgba(236, 175, 184, 0.6);
+          --glow-secondary: rgba(185, 44, 98, 0.5);
+          --neon-glow: 0 0 30px rgba(185, 44, 98, 0.3);
+          --glass-bg: rgba(255, 255, 255, 0.25);
+          --card-shadow: 0 30px 60px -15px rgba(185, 44, 98, 0.3);
+          --gradient-1: linear-gradient(135deg, #f3e8e7, #ecafb8);
+          --gradient-2: linear-gradient(45deg, #ecafb8, #b92c62);
+        }
+
+        /* ===== MALE DARK THEME ===== */
+        body.male-theme {
+          --bg-primary: #030514;
+          --bg-secondary: #0a1120;
+          --accent-1: #00d0ff;
+          --accent-2: #7a2eff;
+          --pure-white: #0f172a;
+          --text-primary: #ffffff;
+          --text-secondary: #a0b8d4;
+          --glow-primary: rgba(0, 208, 255, 0.6);
+          --glow-secondary: rgba(122, 46, 255, 0.5);
+          --neon-glow: 0 0 40px #00d0ff, 0 0 80px #7a2eff;
+          --glass-bg: rgba(10, 17, 32, 0.4);
+          --card-shadow: 0 30px 60px -15px rgba(0, 208, 255, 0.4);
+          --gradient-1: linear-gradient(135deg, #030514, #0a1120);
+          --gradient-2: linear-gradient(45deg, #00d0ff, #7a2eff);
+        }
+
+        /* Canvas 3D Background */
+        #canvas-3d {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 0;
+          pointer-events: none;
+        }
+
+        /* Custom Cursor */
+        .custom-cursor {
+          width: 20px;
+          height: 20px;
+          border: 2px solid var(--accent-2);
+          border-radius: 50%;
+          position: fixed;
+          pointer-events: none;
+          z-index: 9999;
+          transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.4, 1);
+          mix-blend-mode: difference;
+          transform: translate(-50%, -50%);
+        }
+
+        .cursor-dot {
+          width: 4px;
+          height: 4px;
+          background: var(--accent-2);
+          border-radius: 50%;
+          position: fixed;
+          pointer-events: none;
+          z-index: 9999;
+          transition: transform 0.1s ease;
+          transform: translate(-50%, -50%);
+        }
+
+        /* Main Content Wrapper */
+        .content-wrapper {
+          position: relative;
+          z-index: 2;
+        }
+
+        /* Navbar - Fixed with proper spacing */
+        .navbar {
+          background: var(--glass-bg) !important;
+          backdrop-filter: blur(20px);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          padding: 1.2rem 0;
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          z-index: 1000;
+        }
+
+        .navbar.scrolled {
+          padding: 0.8rem 0;
+          background: var(--glass-bg) !important;
+          backdrop-filter: blur(30px);
+        }
+
+        .navbar-brand {
+          font-family: 'Syncopate', sans-serif;
+          font-weight: 700;
+          font-size: 1.8rem;
+          background: var(--gradient-2);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          letter-spacing: 2px;
+        }
+
+        .nav-link {
+          color: var(--text-primary) !important;
+          font-weight: 500;
+          margin: 0 1rem;
+          position: relative;
+          text-transform: uppercase;
+          font-size: 0.9rem;
+          letter-spacing: 1px;
+          transition: color 0.3s ease;
+        }
+
+        .nav-link::before {
+          content: '';
+          position: absolute;
+          bottom: -5px;
+          left: 0;
+          width: 0;
+          height: 2px;
+          background: var(--gradient-2);
+          transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-link:hover::before,
+        .nav-link.active::before {
+          width: 100%;
+        }
+
+        /* Theme Toggle Buttons */
+        .theme-toggle {
+          display: flex;
+          gap: 0.5rem;
+          background: var(--glass-bg);
+          padding: 0.3rem;
+          border-radius: 50px;
+          backdrop-filter: blur(10px);
+        }
+
+        .theme-btn {
+          border: none;
+          padding: 0.6rem 1.5rem;
+          border-radius: 50px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          font-size: 0.8rem;
+          transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .theme-btn.female {
+          background: #b92c62;
+          color: #f3e8e7;
+        }
+
+        .theme-btn.male {
+          background: transparent;
+          color: var(--text-primary);
+          border: 1px solid #00d0ff;
+        }
+
+        .theme-btn.active {
+          transform: scale(1.05);
+          box-shadow: 0 0 30px var(--accent-2);
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 0%;
+          height: 4px;
+          background: var(--gradient-2);
+          z-index: 9999;
+          transition: width 0.2s cubic-bezier(0.2, 0.9, 0.4, 1);
+        }
+
+        /* Footer */
+        .footer {
+          background: var(--glass-bg);
+          backdrop-filter: blur(20px);
+          padding: 4rem 0 2rem;
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .social-links {
+          display: flex;
+          gap: 1.5rem;
+          justify-content: center;
+          margin: 2rem 0;
+        }
+
+        .social-link {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          background: var(--gradient-2);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 1.5rem;
+          transition: all 0.6s cubic-bezier(0.2, 0.9, 0.4, 1);
+        }
+
+        .social-link:hover {
+          transform: rotate(360deg) scale(1.1);
+        }
+
+        /* ========== SINGLE SERVICE PAGE LAYOUT (adapted from product detail) ========== */
+        .service-header {
+          padding: 120px 0 40px;
+          background: var(--gradient-1);
+          color: var(--text-primary);
+          position: relative;
+          overflow: hidden;
+          border-bottom: 1px solid var(--accent-1);
+        }
+
+        .service-header .breadcrumb {
+          background: transparent;
+          margin-bottom: 0;
+        }
+
+        .service-header .breadcrumb-item,
+        .service-header .breadcrumb-item a {
+          color: var(--text-secondary);
+          text-decoration: none;
+        }
+
+        .service-header .breadcrumb-item.active {
+          color: var(--accent-2);
+        }
+
+        .breadcrumb-item+.breadcrumb-item::before {
+          color: var(--text-secondary);
+        }
+
+        /* Service Section */
+        .service-section {
+          padding: 60px 0;
+        }
+
+        /* Gallery */
+        .service-gallery {
+          position: relative;
+        }
+
+        .main-image {
+          border-radius: 30px;
+          overflow: hidden;
+          box-shadow: var(--card-shadow);
+          margin-bottom: 20px;
+          cursor: zoom-in;
+        }
+
+        .main-image img {
+          width: 100%;
+          height: auto;
+          transition: transform 0.5s ease;
+        }
+
+        .main-image:hover img {
+          transform: scale(1.05);
+        }
+
+        .thumbnail-container {
+          display: flex;
+          gap: 15px;
+          overflow-x: auto;
+          padding: 10px 0;
+        }
+
+        .thumbnail {
+          width: 80px;
+          height: 80px;
+          border-radius: 15px;
+          overflow: hidden;
+          cursor: pointer;
+          opacity: 0.6;
+          transition: all 0.3s ease;
+          flex-shrink: 0;
+          border: 2px solid transparent;
+        }
+
+        .thumbnail:hover,
+        .thumbnail.active {
+          opacity: 1;
+          border-color: var(--accent-2);
+        }
+
+        .thumbnail img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        /* Service Details */
+        .service-details {
+          background: var(--glass-bg);
+          backdrop-filter: blur(16px);
+          border-radius: 30px;
+          padding: 30px;
+          border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .service-badge {
+          display: inline-block;
+          padding: 5px 12px;
+          border-radius: 50px;
+          font-size: 12px;
+          font-weight: 600;
+          margin-right: 10px;
+          margin-bottom: 15px;
+          background: var(--accent-2);
+          color: white;
+        }
+
+        .service-title {
+          font-size: 2.2rem;
+          font-weight: 700;
+          margin-bottom: 15px;
+        }
+
+        .service-price {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          margin-bottom: 20px;
+        }
+
+        .current-price {
+          font-size: 1.8rem;
+          font-weight: 700;
+          color: var(--accent-2);
+        }
+
+        .original-price {
+          font-size: 1.4rem;
+          color: var(--text-secondary);
+          text-decoration: line-through;
+        }
+
+        .discount {
+          font-size: 1rem;
+          font-weight: 600;
+          color: var(--accent-2);
+          background: rgba(var(--accent-2), 0.1);
+          padding: 3px 10px;
+          border-radius: 20px;
+        }
+
+        .service-description {
+          margin-bottom: 25px;
+          color: var(--text-secondary);
+          line-height: 1.6;
+        }
+
+        .service-meta {
+          display: flex;
+          gap: 20px;
+          margin-bottom: 25px;
+          flex-wrap: wrap;
+        }
+
+        .meta-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: var(--text-secondary);
+        }
+
+        .meta-item i {
+          color: var(--accent-2);
+        }
+
+        /* Option groups (stylist, add-ons) */
+        .option-group {
+          margin-bottom: 25px;
+        }
+
+        .option-title {
+          font-size: 1.1rem;
+          font-weight: 600;
+          margin-bottom: 12px;
+          color: var(--text-primary);
+        }
+
+        .stylist-options {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 15px;
+        }
+
+        .stylist-option {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 16px;
+          border: 2px solid var(--text-secondary);
+          border-radius: 50px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          opacity: 0.7;
+        }
+
+        .stylist-option:hover,
+        .stylist-option.active {
+          border-color: var(--accent-2);
+          opacity: 1;
+          background: var(--glass-bg);
+        }
+
+        .stylist-option img {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+
+        .addon-options {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+
+        .addon-option {
+          padding: 8px 16px;
+          border: 2px solid var(--text-secondary);
+          border-radius: 50px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          opacity: 0.7;
+        }
+
+        .addon-option:hover,
+        .addon-option.active {
+          border-color: var(--accent-2);
+          opacity: 1;
+          background: var(--glass-bg);
+        }
+
+        /* Quantity selector (guests) */
+        .guest-selector {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          margin-bottom: 25px;
+        }
+
+        .guest-controls {
+          display: flex;
+          align-items: center;
+          border: 2px solid var(--text-secondary);
+          border-radius: 50px;
+          overflow: hidden;
+        }
+
+        .guest-btn {
+          width: 40px;
+          height: 40px;
+          background: transparent;
+          border: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.2rem;
+          cursor: pointer;
+          color: var(--text-primary);
+          transition: all 0.3s ease;
+        }
+
+        .guest-btn:hover {
+          background: var(--accent-2);
+          color: white;
+        }
+
+        .guest-input {
+          width: 50px;
+          height: 40px;
+          border: none;
+          text-align: center;
+          font-weight: 600;
+          font-size: 1.1rem;
+          background: transparent;
+          color: var(--text-primary);
+        }
+
+        .guest-input:focus {
+          outline: none;
+        }
+
+        /* Action buttons */
+        .action-buttons {
+          display: flex;
+          gap: 15px;
+          margin-bottom: 25px;
+        }
+
+        .btn-book {
+          background: var(--gradient-2);
+          border: none;
+          color: white;
+          padding: 15px 30px;
+          border-radius: 60px;
+          font-weight: 600;
+          flex: 1;
+          transition: all 0.4s ease;
+          box-shadow: var(--neon-glow);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .btn-book::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+          transition: all 0.6s ease;
+        }
+
+        .btn-book:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 15px 25px var(--accent-2);
+        }
+
+        .btn-book:hover::before {
+          left: 100%;
+        }
+
+        .btn-fav {
+          width: 55px;
+          height: 55px;
+          border: 2px solid var(--text-secondary);
+          border-radius: 50%;
+          background: transparent;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--text-secondary);
+          transition: all 0.3s ease;
+        }
+
+        .btn-fav:hover,
+        .btn-fav.active {
+          color: white;
+          background: var(--accent-2);
+          border-color: var(--accent-2);
+        }
+
+        /* Accordion */
+        .service-accordion .accordion-item {
+          background: var(--glass-bg);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 20px !important;
+          overflow: hidden;
+          margin-bottom: 15px;
+        }
+
+        .service-accordion .accordion-button {
+          background: var(--glass-bg);
+          color: var(--text-primary);
+          border: none;
+          font-weight: 600;
+          padding: 20px;
+        }
+
+        .service-accordion .accordion-button:not(.collapsed) {
+          background: var(--glass-bg);
+          color: var(--accent-2);
+        }
+
+        .service-accordion .accordion-body {
+          padding: 20px;
+          color: var(--text-secondary);
+        }
+
+        .service-accordion .accordion-button::after {
+          filter: invert(0.5);
+        }
+
+        /* Related Services */
+        .related-section {
+          padding: 60px 0;
+          background: var(--glass-bg);
+        }
+
+        .section-title {
+          text-align: center;
+          margin-bottom: 40px;
+        }
+
+        .section-title h2 {
+          font-size: 2.2rem;
+          font-weight: 700;
+          background: var(--gradient-2);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        .service-card-sm {
+          background: var(--glass-bg);
+          backdrop-filter: blur(10px);
+          border-radius: 25px;
+          overflow: hidden;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          transition: all 0.4s ease;
+          height: 100%;
+        }
+
+        .service-card-sm:hover {
+          transform: translateY(-10px);
+          box-shadow: var(--card-shadow);
+        }
+
+        .service-card-sm img {
+          width: 100%;
+          height: 200px;
+          object-fit: cover;
+        }
+
+        .service-card-sm .card-body {
+          padding: 20px;
+          text-align: center;
+        }
+
+        .service-card-sm .card-title {
+          font-size: 1.2rem;
+          font-weight: 600;
+        }
+
+        .service-card-sm .card-price {
+          color: var(--accent-2);
+          font-weight: 600;
+        }
+
+        /* Back to top */
+        .back-to-top {
+          position: fixed;
+          bottom: 30px;
+          right: 30px;
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          background: var(--accent-2);
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-decoration: none;
+          box-shadow: var(--neon-glow);
+          transition: all 0.4s ease;
+          opacity: 0;
+          visibility: hidden;
+          z-index: 1000;
+        }
+
+        .back-to-top.active {
+          opacity: 1;
+          visibility: visible;
+        }
+
+        .back-to-top:hover {
+          transform: translateY(-5px);
+        }
+
+        @media (max-width: 768px) {
+          .service-title {
+            font-size: 1.8rem;
+          }
+
+          .action-buttons {
+            flex-direction: column;
+          }
+
+          .btn-fav {
+            width: 100%;
+          }
+        }
+
+        /* User Dropdown Styling */
+        .user-dropdown {
+          color: var(--text-primary) !important;
+          font-size: 1.2rem;
+          transition: all 0.3s ease;
+          padding: 0.5rem !important;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .user-dropdown:hover {
+          color: var(--accent-2) !important;
+          transform: scale(1.1);
+        }
+
+        .dropdown-menu {
+          background: var(--glass-bg) !important;
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 15px;
+          padding: 1rem;
+          box-shadow: var(--card-shadow);
+          min-width: 200px;
+          margin-top: 10px !important;
+        }
+
+        .dropdown-item {
+          color: var(--text-primary) !important;
+          padding: 0.7rem 1rem;
+          border-radius: 10px;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          font-weight: 500;
+          font-size: 0.9rem;
+        }
+
+        .dropdown-item i {
+          width: 20px;
+          margin-right: 10px;
+          color: var(--accent-2);
+          font-size: 1.1rem;
+        }
+
+        .dropdown-item:hover {
+          background: var(--gradient-2) !important;
+          color: white !important;
+          transform: translateX(5px);
+        }
+
+        .dropdown-item:hover i {
+          color: white;
+        }
+
+        .dropdown-divider {
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          margin: 0.5rem 0;
+        }
+
+        .dropdown-header {
+          color: var(--text-secondary);
+          font-weight: 600;
+          text-transform: uppercase;
+          font-size: 0.7rem;
+          letter-spacing: 1px;
+          padding: 0.5rem 1rem;
+        }
+
+        .text-neon {
+          color: var(--accent-2) !important;
+          text-shadow: 0 0 10px var(--glow-secondary);
+        }
+
+        /* Review Scroll Area Styles */
+        .reviews-scroll-container {
+          max-height: 380px;
+          overflow-y: auto;
+          padding-right: 8px;
+          margin-top: 12px;
+        }
+
+        .reviews-scroll-container::-webkit-scrollbar {
+          width: 5px;
+        }
+
+        .reviews-scroll-container::-webkit-scrollbar-track {
+          background: var(--glass-bg);
+          border-radius: 10px;
+        }
+
+        .reviews-scroll-container::-webkit-scrollbar-thumb {
+          background: var(--accent-2);
+          border-radius: 10px;
+        }
+
+        .review-item {
+          display: flex;
+          gap: 15px;
+          margin-bottom: 20px;
+          padding-bottom: 16px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          align-items: flex-start;
+        }
+
+        .review-avatar {
+          width: 100px;
+          height: 100px;
+          flex-shrink: 0;
+          border-radius: 20%;
+          overflow: hidden;
+          border: 2px solid var(--accent-2);
+          box-shadow: 0 0 10px var(--glow-primary);
+        }
+
+        .review-avatar img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .review-content {
+          flex: 1;
+        }
+
+        .reviewer-name {
+          font-weight: 700;
+          font-size: 1rem;
+          margin-bottom: 4px;
+          color: var(--text-primary);
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+
+        .review-stars {
+          color: #ffb347;
+          font-size: 0.8rem;
+          letter-spacing: 2px;
+        }
+
+        .review-text {
+          font-size: 0.85rem;
+          color: var(--text-secondary);
+          margin: 6px 0 4px;
+          line-height: 1.4;
+        }
+
+        .review-date {
+          font-size: 0.7rem;
+          color: var(--text-secondary);
+          opacity: 0.7;
+        }
+
+        .no-logic-note {
+          text-align: center;
+          font-size: 0.8rem;
+          color: var(--accent-2);
+          background: var(--glass-bg);
+          padding: 8px;
+          border-radius: 30px;
+          margin-top: 8px;
+          backdrop-filter: blur(4px);
+        }
+
+        /* Responsiveness for User Dropdown */
+        @media (max-width: 991px) {
+          .user-dropdown {
+            justify-content: flex-start;
+            padding: 1rem 0 !important;
+          }
+
+          .dropdown-menu {
+            background: transparent !important;
+            border: none;
+            box-shadow: none;
+            padding-left: 1rem;
+            backdrop-filter: none;
+            margin-top: 0 !important;
+          }
+
+          .dropdown-item:hover {
+            transform: none;
+          }
+        }
+    </style>
+</head>
+
+<body class="female-theme">
+<!-- 3D Canvas Background -->
+<canvas id="canvas-3d"></canvas>
+
+<!-- Custom Cursor -->
+<div class="custom-cursor"></div>
+<div class="cursor-dot"></div>
+
+<!-- Scroll Progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Navbar (same as homepage) -->
+<nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand" href="#">AURORA</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="home.html">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="services.html">Services</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="wishlist.html">Wishlist</a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown ms-lg-2">
+                    <a class="nav-link dropdown-toggle user-dropdown" href="#" id="userDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle fa-lg"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li>
+                            <h6 class="dropdown-header text-neon" id="welcomeUserText">Welcome Guest</h6>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="myAccount.html"><i class="fas fa-user"></i>My Account</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-question-circle"></i>Support</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li id="navSignIn"><a class="dropdown-item btn-signin" href="signIn.html"><i class="fas fa-sign-in-alt"></i>Sign In</a>
+                        </li>
+                        <li id="navSignUp"><a class="dropdown-item" href="signUp.html"><i class="fas fa-user-plus"></i>Register</a></li>
+                        <li id="navSignOut" style="display: none;"><a class="dropdown-item" href="#" onclick="signOut()"><i class="fas fa-sign-out-alt"></i>Sign Out</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="content-wrapper">
+    <!-- Page Header (breadcrumb) -->
+    <section class="service-header">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="home.html">Home</a></li>
+                    <li class="breadcrumb-item"><a href="services.html">Services</a></li>
+                    <li class="breadcrumb-item"><a href="#" id="breadcrumbCategory">-</a></li>
+                    <li class="breadcrumb-item active" aria-current="page" id="breadcrumbTitle">-</li>
+                </ol>
+            </nav>
+        </div>
+    </section>
+
+    <!-- Service Detail Section -->
+    <section class="service-section">
+        <div class="container">
+            <div class="row g-5">
+                <!-- Gallery Column -->
+                <div class="col-lg-6">
+                    <div class="service-gallery">
+                        <div class="main-image">
+                            <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800" alt="Diamond Facial"
+                                 id="mainImage">
+                        </div>
+                        <div class="thumbnail-container" id="thumbnailContainer">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Details Column -->
+                <div class="col-lg-6">
+                    <div class="service-details">
+                        <span class="service-badge">✨ SIGNATURE</span>
+                        <span class="service-badge">🔥 BESTSERVICE</span>
+
+                        <h1 class="service-title" id="serviceTitle">Loading...</h1>
+
+                        <div class="service-price" id="servicePriceContainer">
+                            <span class="current-price" id="currentPrice">$0</span>
+                            <!-- Optional original price and discount will be added here -->
+                        </div>
+
+                        <p class="service-description" id="serviceDescriptionShort">
+                            <!-- Short description -->
+                        </p>
+
+                        <div class="service-meta">
+                            <div class="meta-item"><i class="bi bi-clock"></i> <span id="serviceDuration">-</span> min</div>
+                            <div class="meta-item"><i class="bi bi-calendar-check"></i> Instant confirmation</div>
+                            <div class="meta-item"><i class="bi bi-tag"></i> <span id="serviceCategoryMeta">-</span></div>
+                        </div>
+
+                        <!-- Available Stylists -->
+                        <div class="option-group">
+                            <h4 class="option-title">Available Stylists</h4>
+                            <div class="stylist-options">
+                                <div class="stylist-option active">
+                                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="stylist"> Emma
+                                </div>
+                                <div class="stylist-option active">
+                                    <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="stylist"> Olivia
+                                </div>
+                                <div class="stylist-option">
+                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="stylist"> James
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="action-buttons">
+                            <button class="btn-book" id="bookNowBtn"><i class="bi bi-calendar-check"></i> BOOK NOW</button>
+                            <button class="btn-fav" id="favBtn"><i class="bi bi-heart"></i></button>
+                        </div>
+
+                        <!-- Accordion for details -->
+                        <div class="service-accordion accordion" id="serviceAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#descCollapse" aria-expanded="true">
+                                        Full Description
+                                    </button>
+                                </h2>
+                                <div id="descCollapse" class="accordion-collapse collapse show" data-bs-parent="#serviceAccordion">
+                                    <div class="accordion-body" id="serviceDescriptionFull">
+                                        <!-- Full description -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#specsCollapse">
+                                        Specifications
+                                    </button>
+                                </h2>
+                                <div id="specsCollapse" class="accordion-collapse collapse" data-bs-parent="#serviceAccordion">
+                                    <div class="accordion-body">
+                                        <table style="width:100%">
+                                            <tr>
+                                                <td>Duration</td>
+                                                <td id="specDuration">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Category</td>
+                                                <td id="specCategory">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Gender</td>
+                                                <td id="specGender">-</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#reviewCollapse">
+                                        Reviews
+                                    </button>
+                                </h2>
+                                <div id="reviewCollapse" class="accordion-collapse collapse" data-bs-parent="#serviceAccordion">
+                                    <div class="accordion-body">
+                                        <div class="reviews-scroll-container">
+                                            <!-- Review 1 -->
+                                            <div class="review-item">
+                                                <div class="review-avatar">
+                                                    <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Sophia">
+                                                </div>
+                                                <div class="review-content">
+                                                    <div class="reviewer-name">
+                                                        Sophia Chen <span class="review-stars">★★★★★</span>
+                                                    </div>
+                                                    <div class="review-text">
+                                                        Absolutely phenomenal! My skin feels like silk after the Diamond 3D facial. The glow is
+                                                        unreal and lasted for weeks. Highly recommend Emma as stylist.
+                                                    </div>
+                                                    <div class="review-date">2 weeks ago</div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Review 2 -->
+                                            <div class="review-item">
+                                                <div class="review-avatar">
+                                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Michael">
+                                                </div>
+                                                <div class="review-content">
+                                                    <div class="reviewer-name">
+                                                        Michael Rivera <span class="review-stars">★★★★☆</span>
+                                                    </div>
+                                                    <div class="review-text">
+                                                        Went for first facial ever, the staff was super welcoming. The diamond microdermabrasion
+                                                        felt incredible, my complexion brightened immediately.
+                                                    </div>
+                                                    <div class="review-date">1 month ago</div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Review 3 -->
+                                            <div class="review-item">
+                                                <div class="review-avatar">
+                                                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Jessica">
+                                                </div>
+                                                <div class="review-content">
+                                                    <div class="reviewer-name">
+                                                        Jessica Lin <span class="review-stars">★★★★★</span>
+                                                    </div>
+                                                    <div class="review-text">
+                                                        Best facial in town! They used premium products and the LED mask session was so relaxing.
+                                                        My pores look invisible now!
+                                                    </div>
+                                                    <div class="review-date">3 weeks ago</div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Review 4 -->
+                                            <div class="review-item">
+                                                <div class="review-avatar">
+                                                    <img src="https://randomuser.me/api/portraits/women/90.jpg" alt="Amara">
+                                                </div>
+                                                <div class="review-content">
+                                                    <div class="reviewer-name">
+                                                        Amara Okonkwo <span class="review-stars">★★★★★</span>
+                                                    </div>
+                                                    <div class="review-text">
+                                                        Pure luxury. From the 3D skin scan to the diamond infusion — top-tier. Already booked my
+                                                        next session.
+                                                    </div>
+                                                    <div class="review-date">5 days ago</div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Review 5 -->
+                                            <div class="review-item">
+                                                <div class="review-avatar">
+                                                    <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="David">
+                                                </div>
+                                                <div class="review-content">
+                                                    <div class="reviewer-name">
+                                                        David Park <span class="review-stars">★★★★☆</span>
+                                                    </div>
+                                                    <div class="review-text">
+                                                        Great experience, very thorough. Skin felt rejuvenated, and the customer service was
+                                                        excellent. Will come back.
+                                                    </div>
+                                                    <div class="review-date">1 week ago</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="no-logic-note">
+                                            <i class="bi bi-arrow-down-circle-fill"></i> Scroll down to view more reviews
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#policyCollapse">
+                                        Booking & Cancellation
+                                    </button>
+                                </h2>
+                                <div id="policyCollapse" class="accordion-collapse collapse" data-bs-parent="#serviceAccordion">
+                                    <div class="accordion-body">
+                                        <p><strong>Cancellation:</strong> Free up to 24h before. Later cancellations incur 50% fee.</p>
+                                        <p><strong>Late arrival:</strong> Service time may be shortened.</p>
+                                        <p><strong>Gift cards:</strong> Accepted</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Related Services -->
+    <section class="related-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>You May Also Love</h2>
+                <p class="text-secondary">Discover similar treatments</p>
+            </div>
+            <div class="row g-4" id="relatedServicesGrid">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h3 class="navbar-brand mb-3">AURORA</h3>
+                    <p style="color: var(--text-secondary);">Redefining beauty through technology and artistry. Experience the
+                        dimension of true elegance.</p>
+                </div>
+                <div class="col-lg-2 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Home</a></li>
+                        <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Services</a></li>
+                        <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Gallery</a></li>
+                        <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 mb-4">
+                    <h5>Contact</h5>
+                    <ul class="list-unstyled">
+                        <li style="color: var(--text-secondary);"><i class="bi bi-geo-alt"></i> 123 Beauty Ave</li>
+                        <li style="color: var(--text-secondary);"><i class="bi bi-telephone"></i> +1 234 567 890</li>
+                        <li style="color: var(--text-secondary);"><i class="bi bi-envelope"></i> info@aurora.com</li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 mb-4">
+                    <h5>Follow Us</h5>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="social-link"><i class="bi bi-tiktok"></i></a>
+                        <a href="#" class="social-link"><i class="bi bi-pinterest"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr style="border-color: var(--text-secondary); opacity: 0.1;">
+            <div class="text-center" style="color: var(--text-secondary);">
+                <p>&copy; 2025 AURORA SALON. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<!-- Back to top -->
+<a href="#" class="back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/ServiceJS/serviceDisplay.js?v=2"></script>
+<script src="js/ReviewJS/SingleServiceReviews.js"></script>
+<script>
+    // ========== INITIALIZE THEME ==========
+    const savedTheme = localStorage.getItem('selectedTheme') || 'female';
+    document.body.classList.remove('female-theme', 'male-theme');
+    document.body.classList.add(`${savedTheme}-theme`);
+
+    // ========== THREE.JS BACKGROUND (copied from homepage) ==========
+    const canvas = document.getElementById('canvas-3d');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    const particlesGeometry = new THREE.BufferGeometry();
+    const particlesCount = 2000;
+    const posArray = new Float32Array(particlesCount * 3);
+    const colorArray = new Float32Array(particlesCount * 3);
+    for (let i = 0; i < particlesCount * 3; i += 3) {
+      posArray[i] = (Math.random() - 0.5) * 30;
+      posArray[i + 1] = (Math.random() - 0.5) * 30;
+      posArray[i + 2] = (Math.random() - 0.5) * 30;
+      const theme = document.body.classList.contains('female-theme') ? '#b92c62' : '#00d0ff';
+      const color = new THREE.Color(theme);
+      colorArray[i] = color.r;
+      colorArray[i + 1] = color.g;
+      colorArray[i + 2] = color.b;
+    }
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+    const particlesMaterial = new THREE.PointsMaterial({ size: 0.02, vertexColors: true, transparent: true, blending: THREE.AdditiveBlending });
+    const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particlesMesh);
+    camera.position.z = 15;
+    function animateParticles() {
+      requestAnimationFrame(animateParticles);
+      particlesMesh.rotation.y += 0.0002;
+      particlesMesh.rotation.x += 0.0001;
+      renderer.render(scene, camera);
+    }
+    animateParticles();
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // ========== CUSTOM CURSOR ==========
+    const cursor = document.querySelector('.custom-cursor');
+    const cursorDot = document.querySelector('.cursor-dot');
+    let mouseX = 0, mouseY = 0, cursorX = 0, cursorY = 0;
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX; mouseY = e.clientY;
+      cursorDot.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+    });
+    function animateCursor() {
+      cursorX += (mouseX - cursorX) * 0.2;
+      cursorY += (mouseY - cursorY) * 0.2;
+      cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    // ========== SCROLL PROGRESS ==========
+    window.addEventListener('scroll', () => {
+      const winScroll = document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      document.getElementById('scrollProgress').style.width = scrolled + '%';
+    });
+
+    // ========== NAVBAR SCROLL EFFECT ==========
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('mainNav');
+      if (window.scrollY > 50) nav.classList.add('scrolled');
+      else nav.classList.remove('scrolled');
+    });
+
+    // Theme toggle removed, managed globally via home.html and localStorage
+
+    // ========== BACK TO TOP ==========
+    const backBtn = document.querySelector('.back-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) backBtn.classList.add('active');
+      else backBtn.classList.remove('active');
+    });
+    backBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // GALLERY THUMBNAILS handled by serviceDisplay.js
+
+    // ========== FAVORITE BUTTON ==========
+    const favBtn = document.getElementById('favBtn');
+    favBtn.addEventListener('click', () => favBtn.classList.toggle('active'));
+
+    // ========== BOOK NOW Logic ==========
+    document.getElementById('bookNowBtn').addEventListener('click', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const serviceId = urlParams.get('id');
+        
+        // Use window.currentUser set by globalNav.js for consistency
+        if (window.currentUser) {
+            window.location.href = `/appointment.html?serviceId=${serviceId}`;
+        } else {
+            // Need to sign in first, pass the redirect URL
+            const redirectUrlTarget = `/appointment.html?serviceId=${serviceId}`;
+            sessionStorage.setItem('postLoginRedirect', redirectUrlTarget);
+            // Pass in encoded format
+            window.location.href = `signIn.html?redirect=${encodeURIComponent(redirectUrlTarget)}`;
+        }
+    });
+</script>
+<script src="js/UserJS/globalNav.js?v=4"></script>
+</body>
+
+</html>
